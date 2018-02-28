@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '%+^66e6nomvz*kxp!*wrc#1iqj)%r&_yczrunyri=wwat(gr=9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'api.nthbox.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'api.nthbox.com', 'claire.nthbox.com', 'nick.nthbox.com', 'taylor.nthbox.com', 'tyler.nthbox.com']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'conversation'
 ]
 
 MIDDLEWARE = [
