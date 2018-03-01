@@ -11,6 +11,6 @@ class Event(models.Model):
 	age_min = models.IntegerField(default=0)
 	age_max = models.IntegerField(default=0)
 	interests = models.ForeignKey(Interests, on_delete=models.CASCADE)
-	attendees = models.ForeignKey(Account, on_delete=models.CASCADE)
-	host = models.ForeignKey(Account, on_delete=models.CASCADE)
+	attendees = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="atendee_accounts")
+	host = models.ForeignKey(Account, on_delete=models.CASCADE, related_name="event_host_account")
 	is_hidden = models.BooleanField(default=False)
