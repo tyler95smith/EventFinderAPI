@@ -1,6 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+#TODO: From reading online, it sounds like in addition to these "Profile" models for
+#	different account types, we should also create a custom User model so we can
+#	define how to distinguish what type of Account can belong to said User. 
+
 #=======================================================
 #
 #	Model to be used for the account of a user
