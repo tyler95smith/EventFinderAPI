@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Interests(models.Model):
-	eventname = models.CharField(max_length=100)	
+	name = models.CharField(max_length=100)	
 
 class Account(models.Model):
 	eventname = models.CharField(max_length=100)
@@ -16,6 +16,7 @@ class Event(models.Model):
 	age_min = models.IntegerField(default=0)
 	age_max = models.IntegerField(default=0)
 	interests = models.ForeignKey(Interests, on_delete=models.CASCADE)
+	attendees = models.ForeignKey(Account, on_delete=models.CASCADE)
 	host = models.ForeignKey(Account, on_delete=models.CASCADE)
 	is_hidden = models.BooleanField(default=False)
 
@@ -37,3 +38,8 @@ class Message(models.Model):
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     sender = models.ForeignKey(Account, on_delete=models.CASCADE)
     message = models.CharField(max_length=512)
+
+class Notification(models.Model):
+	event = models.ForeignKey(Event, on_delete=models.CASCADE)
+	time_to_send = models.DateTimeField()
+	message = models.CharField(max_length=512)
