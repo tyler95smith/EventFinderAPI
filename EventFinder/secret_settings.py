@@ -2,12 +2,14 @@
 
 
 DATABASES = {
-    'default': {
+    '''
+   'default': {
         'ENGINE'    : 'django.db.backends.mysql',
         'NAME'      : 'EventFinderDB',
         'USER'      : 'John Hancock',
         'PASSWORDD' : 'Get your own password',
         'HOST'      : 'localhost',
         'PORT'      : '3306'
-    }
+    }  
+    '''
 }
