@@ -1,11 +1,20 @@
 from django.db import models
 
 # Create your models here.
+class Interests(models.Model):
+	eventname = models.CharField(max_length=100)	
+
 class Account(models.Model):
 	eventname = models.CharField(max_length=100)
 
 class Event(models.Model):
-	eventname = models.CharField(max_length=100)
+	event_name = models.CharField(max_length=100)
+	location = models.CharField(max_length=200)
+	description = models.CharField(max_length=512)
+	age_min = models.IntegerField(default=0)
+	age_max = models.IntegerField(default=0)
+	interests = models.ForeignKey(Interests, on_delete=models.CASCADE)
+	host = models.ForeignKey(Account, on_delete=models.CASCADE)
 
 class Conversation(models.Model):
     event = models.ForeignKey(Event,   on_delete=models.CASCADE)
