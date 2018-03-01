@@ -8,6 +8,8 @@ class UserSerializer(serializers.HyperLinkedModelSerializer):
 		fields = ('id','username','email')
 
 class PersonSerializer(serializers.HyperLinkedModelSerializer):
+	user = UserSerializer()
+
 	class Meta:
 		model = Person
 		fields = ('id', 'user', 'date_of_birth', 'bio', 'primaryLocation', 'currentLocation', 'hideLocation')
