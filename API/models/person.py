@@ -13,14 +13,14 @@ class Person(models.Model):
 
 	#
 	# The User this Person Account belongs to:
-	user = models.OneToOneField(User)
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	
 	#
 	# Personal Account Attributes:
 	date_of_birth = models.DateField()
 	bio = models.CharField(max_length=500)
 	primaryLocation = models.CharField(max_length=200) #todo: Needs to be a Location, not just text
-	currentLocation = models.CharField(max_lenght=200) #todo: Needs to be a Location, not just text
+	currentLocation = models.CharField(max_length=200) #todo: Needs to be a Location, not just text
 	hideLocation = models.BooleanField(default=False)
 
 	  #todo: profilePicture ImageField
