@@ -10,7 +10,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 		user = User.objects.create(
 				username=valid_data['username'],
-				email=valid_data['email']
+				email=valid_data['email'],
 			)
 		user.set_password(valid_data['password'])
 		user.save()
