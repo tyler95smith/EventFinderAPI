@@ -9,7 +9,14 @@ from rest_framework.response import Response
 from rest_framework import status
 
 #
+# To test api
+class UserCreate(APIView):
+	def get(self, request, format='json'):
+		return Response("It's working! Hello from the API.")
+
+#
 # endpoint for creating a new user
+"""
 @api_view (['POST'])
 def create_auth(request):
 	serialized = UserSerializer(data=request.DATA)
@@ -18,7 +25,7 @@ def create_auth(request):
 		return Response(serialized.data, status=status.HTTP_201_CREATED)
 	else:
 		return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
-
+"""
 
 
 #
