@@ -10,7 +10,7 @@ from rest_framework import status
 
 #
 # To test api
-class UserCreate(APIView):
+class TestAPIView(APIView):
 	def get(self, request, format='json'):
 		return Response("It's working! Hello from the API.")
 
