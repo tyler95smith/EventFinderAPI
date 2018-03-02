@@ -15,6 +15,13 @@ class TestAPIView(APIView):
 		return Response("It's working! Hello from the API.")
 
 #
+# temporary test api end point to list all users... 		
+class ListUsers(APIView):	
+	def get(self, request, format='json'):
+		users = User.objects.all()
+		serializer = UserSerializer(users, many=True)
+		return Response(serializer.data)
+#
 # endpoint for creating a new user
 """
 @api_view (['POST'])
