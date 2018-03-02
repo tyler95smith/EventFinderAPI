@@ -1,5 +1,7 @@
-from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 #TODO: From reading online, it sounds like in addition to these "Profile" models for
 #	different account types, we should also create a custom User model so we can
@@ -26,6 +28,16 @@ class Person(models.Model):
 	primaryLocation = models.CharField(max_length=200) #todo: Needs to be a Location, not just text
 	currentLocation = models.CharField(max_length=200) #todo: Needs to be a Location, not just text
 	hideLocation = models.BooleanField(default=False)
+
+
+@receiver(post_save, sender=User)
+def create_person(sender, instance, created, **kwargs):
+    if created:
+        Person.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_person(sender, instance, **kwargs):
+    instance.person.save()
 
 	  #todo: profilePicture ImageField
           #todo: photos array[images]
