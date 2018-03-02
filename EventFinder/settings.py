@@ -118,6 +118,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Import our email settings
+from .smtp_settings import *
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
