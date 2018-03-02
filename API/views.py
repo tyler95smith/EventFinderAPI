@@ -15,12 +15,24 @@ class TestAPIView(APIView):
 		return Response("It's working! Hello from the API.")
 
 #
-# temporary test api end point to list all users... 		
+# api end point to list all users... 	
 class ListUsers(APIView):	
 	def get(self, request, format='json'):
 		users = User.objects.all()
 		serializer = UserSerializer(users, many=True)
 		return Response(serializer.data)
+
+#
+# api end point to test creating a user... 
+# to create user send data in following json format via post...	
+# {"username": "taylor789", "email": "example@ex.com", "password":"iwejfoiwejfdk"}
+class TestCreateUser(APIView):
+	def post(self, request, format='json'):
+		serializer = UserSerializer(data=request.data)
+		if serializer.is_valid():
+			user = serializer.save()
+			if user:
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
 #
 # endpoint for creating a new user
 """
