@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
-from models.Person import Person
+from .models.person import Person
 from rest_framework import serializers
 
-class UserSerializer(serializers.HyperLinkedModelSerializer):
+class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 	password = serializers.CharField(write_only=True)
 
@@ -23,7 +23,7 @@ class UserSerializer(serializers.HyperLinkedModelSerializer):
 
 
 
-class PersonSerializer(serializers.HyperLinkedModelSerializer):
+class PersonSerializer(serializers.HyperlinkedModelSerializer):
 	user = UserSerializer()
 
 	class Meta:

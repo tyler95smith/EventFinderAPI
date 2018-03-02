@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from rest_framework.views import APIView	# class based views
 from rest_framework.decorators import api_view	# function based views
-from API.models.person import Person
-from django.contrib.auth import User
+from API.models import Person
+from django.contrib.auth.models import User
 from .serializers import PersonSerializer
-from API.serializers import UserSerializer
+from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -33,9 +33,9 @@ def create_auth(request):
 """
 @api_view(['GET', 'POST'])
 def person_creator(request):
-	"""
-	Lists the accounts(GET) or creates a new account (POST).
-	"""
+
+	#Lists the accounts(GET) or creates a new account (POST).
+
 	if request.method == 'GET':
 		persons = Person.objects.all()
 		serializer = PersonSerializer(persons, many=True)
