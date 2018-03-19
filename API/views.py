@@ -2,9 +2,11 @@ from django.shortcuts import render
 from rest_framework.views import APIView	# class based views
 from rest_framework.decorators import api_view	# function based views
 from API.models import Person
+from API.models import Event
 from django.contrib.auth.models import User
 from .serializers import PersonSerializer
 from .serializers import UserSerializer
+from .serializers import EventSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -58,6 +60,12 @@ class ActivateUser(APIView):
                 return Response("Success.  The account for %s is now active!" % (u.username))
             else:
                 return Response("Error: This token appears to be old or invalid.")
+
+class GetPastEvents(APIView):
+	def get(self, request, format='json'):
+		events = Event.objects.all()
+		serializer = EventSerializer(events, many=True)
+		return Response(serializer.data)
     
 """
 @api_view (['POST'])

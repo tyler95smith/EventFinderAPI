@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from .models.person import Person
+from .models.event import Event
 from rest_framework import serializers
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -29,3 +30,8 @@ class PersonSerializer(serializers.HyperlinkedModelSerializer):
 	class Meta:
 		model = Person
 		fields = ('id', 'user', 'date_of_birth', 'bio', 'primaryLocation', 'currentLocation', 'hideLocation')
+
+class EventSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = Event
+		fields = ('id', 'date_created', 'event_name', 'location')
