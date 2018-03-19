@@ -7,6 +7,8 @@ from .serializers import PersonSerializer
 from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from datetime import datetime
 
 #
 # To test api
@@ -35,6 +37,28 @@ class TestCreateUser(APIView):
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 #
 # endpoint for creating a new user
+
+class CreateUser(APIView):
+    def post(self, request, format='json'):
+        pass
+
+class ActivateUser(APIView):
+    def get(self, request, format='none'):
+        u = User.objects.get(id=request.GET.get('id'))
+        if u.person.isBanned:
+            return Response("Error: This user has been banned.")
+        if u.is_active:
+            return Response("Error: This user is already confirmed.")
+        else:
+            g = PasswordResetTokenGenerator()
+            if g.check_token(u, request.GET.get('token')):
+                u.is_active = True
+                u.last_login = datetime.now() # We need to change something to invalidate the token.
+                u.save()
+                return Response("Success.  The account for %s is now active!" % (u.username))
+            else:
+                return Response("Error: This token appears to be old or invalid.")
+    
 """
 @api_view (['POST'])
 def create_auth(request):

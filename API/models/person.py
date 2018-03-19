@@ -17,27 +17,18 @@ from django.dispatch import receiver
 
 class Person(models.Model):
 
-	#
-	# The User this Person Account belongs to:
-	user = models.OneToOneField(User, on_delete=models.CASCADE)
+    #
+    # The User this Person Account belongs to:
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 	
-	#
-	# Personal Account Attributes:
-	date_of_birth = models.DateField()
-	bio = models.CharField(max_length=500)
-	primaryLocation = models.CharField(max_length=200) #todo: Needs to be a Location, not just text
-	currentLocation = models.CharField(max_length=200) #todo: Needs to be a Location, not just text
-	hideLocation = models.BooleanField(default=False)
-
-
-@receiver(post_save, sender=User)
-def create_person(sender, instance, created, **kwargs):
-    if created:
-        Person.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_person(sender, instance, **kwargs):
-    instance.person.save()
+    #
+    # Personal Account Attributes:
+    date_of_birth = models.DateField(null=True)
+    bio = models.CharField(max_length=500)
+    primaryLocation = models.CharField(max_length=200) #todo: Needs to be a Location, not just text
+    currentLocation = models.CharField(max_length=200) #todo: Needs to be a Location, not just text
+    hideLocation = models.BooleanField(default=False)
+    isBanned = models.BooleanField(default=False)
 
 	  #todo: profilePicture ImageField
           #todo: photos array[images]
