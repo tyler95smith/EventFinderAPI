@@ -10,7 +10,7 @@ from .serializers import EventSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from datetime import datetime
+import datetime
 
 #
 # To test api
@@ -61,9 +61,18 @@ class ActivateUser(APIView):
             else:
                 return Response("Error: This token appears to be old or invalid.")
 
+#
+# api end point to get past events of a specific user
+#
+# TODO: add error handling for when the provided values are not the correct type
 class GetPastEvents(APIView):
 	def get(self, request, format='json'):
-		events = Event.objects.all()
+		# if no 'host' value is sent in the request default to zero
+		req_user = request.query_params.get('user', 0)
+		# if the host value is not the correct type return error
+		#if not isinstance(req_user, int):
+		#	return Response("Error: The host value must be an integer id")
+		events = Event.objects.filter(attendees=req_user, event_date__lt=datetime.date.today())
 		serializer = EventSerializer(events, many=True)
 		return Response(serializer.data)
 		
