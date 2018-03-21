@@ -50,13 +50,7 @@ class PersonSerializer(serializers.ModelSerializer):
 		model = Person
 		fields = ('id', 'user', 'date_of_birth', 'bio', 'primaryLocation', 'currentLocation', 'hideLocation')
 
-class InterestsSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Interests
-		fields = '__all__'
-
 class EventSerializer(serializers.ModelSerializer):
-	interests = InterestsSerializer()
 
 	class Meta:
 		model = Event
