@@ -12,23 +12,16 @@ def set_new_user_active_false(sender, instance, *args, **kwargs):
     if not instance.pk:
         instance.is_active = False
 
-@receiver(post_save, sender=User)
-def create_person(sender, instance, created, **kwargs):
-    if created:
-        Person.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_person(sender, instance, **kwargs):
-    instance.person.save()
-
-@receiver(post_save, sender=User)
+#
+# sends email confirmation token in the event that a Person Account is created
+@receiver(post_save, sender=Person)
 def send_email_confirmation_token(sender, instance, created, **kwargs):
     if created:
-        if not instance.is_active and not instance.person.isBanned:
+        if not instance.user.is_active and not instance.isBanned:
             g = PasswordResetTokenGenerator()
-            t = g.make_token(instance)
+            t = g.make_token(instance.user)
             Subject = 'Welcome to Event Finder - Account Confirmation Required'
-            Message = 'Please click the following link to activate your account: https://api.nthbox.com/api/activateuser/?id=%s&token=%s' % (instance.id, t)
+            Message = 'Please click the following link to activate your account: https://api.nthbox.com/api/activateuser/?id=%s&token=%s' % (instance.user.id, t)
             From    = 'welcome@api.nthbox.com'
-            To      = [instance.email]
+            To      = [instance.user.email]
             send_mail(Subject, Message, From, To)

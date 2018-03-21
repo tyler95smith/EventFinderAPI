@@ -27,23 +27,23 @@ class ListUsers(APIView):
 		return Response(serializer.data)
 
 #
-# api end point to test creating a user... 
+# api end point to create a user (without account)... 
 # to create user send data in following json format via post...	
 # {"username": "taylor789", "email": "example@ex.com", "password":"iwejfoiwejfdk"}
-class TestCreateUser(APIView):
+class CreateUser(APIView):
 	def post(self, request, format='json'):
 		serializer = UserSerializer(data=request.data)
 		if serializer.is_valid():
 			user = serializer.save()
 			if user:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 #
-# endpoint for creating a new user
-
-class CreateUser(APIView):
-    def post(self, request, format='json'):
-        pass
-
+# Note: when calling ActivateUser in the future we will need to check whether 
+#		the account is a person or business account type. If this were a 
+#		business account being activated, u.person would not exist as the
+#		account type for the user would be a business account. For now it's 
+#		fine since there is only one account type that can belong to a user.
 class ActivateUser(APIView):
     def get(self, request, format='none'):
         u = User.objects.get(id=request.GET.get('id'))
@@ -66,36 +66,49 @@ class GetPastEvents(APIView):
 		events = Event.objects.all()
 		serializer = EventSerializer(events, many=True)
 		return Response(serializer.data)
-    
-"""
-@api_view (['POST'])
-def create_auth(request):
-	serialized = UserSerializer(data=request.DATA)
-	if serialized.is_valid():
-		UserSerializer.create(serialized)
-		return Response(serialized.data, status=status.HTTP_201_CREATED)
-	else:
-		return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
-"""
-
-
+		
 #
-# endpoint for creating an account
-"""
-@api_view(['GET', 'POST'])
-def person_creator(request):
-
-	#Lists the accounts(GET) or creates a new account (POST).
-
-	if request.method == 'GET':
+# api end point to list all accounts of type 'person'... 	
+class ListPersons(APIView):	
+	def get(self, request, format='json'):
 		persons = Person.objects.all()
 		serializer = PersonSerializer(persons, many=True)
 		return Response(serializer.data)
-
-	elif request.method == 'POST':
-		serializer = SnippetSerializer(data=request.data)
+		
+#---------------------------------------------------------------
+#
+#	CreatePersonAccount(APIView):
+#		api end point for creating a new user with a personal
+#		account (person). This API post call will create both
+#		a new user AND a new person account for that user.
+#		
+#		Expects a json representation of person object to be 
+#		created. The serializer will take care of making sense 
+#		of the fields if they are valid.
+#		
+#		The following format is expected:
+#		{
+#        "user": {
+#            "username": "someusername",
+#            "email": "example@exmpl.com",
+#            "password": "notagoodpassword"
+#        },
+#        "date_of_birth": "1998-09-04",
+#        "bio": "Yeah. this is a good bio..",
+#        "primaryLocation": "San Diego, CA",
+#        "currentLocation": "Los Angeles, CA",
+#        "hideLocation": false
+#    	}
+#			
+#----------------------------------------------------------------
+class CreatePersonAccount(APIView):
+	def post(self, request, format='json'):
+		serializer = PersonSerializer(data=request.data)
+		#TODO: Probably handle cases where username/email exists
 		if serializer.is_valid():
-			serializer.save()
-			return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-"""
+			person = serializer.save()
+			if person:
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response("Input was not valid")	#TODO: May need to return a status code in the event of invalid input
+
+

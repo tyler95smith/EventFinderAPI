@@ -25,8 +25,8 @@ class Person(models.Model):
     # Personal Account Attributes:
     date_of_birth = models.DateField(null=True)
     bio = models.CharField(max_length=500)
-    primaryLocation = models.CharField(max_length=200) #todo: Needs to be a Location, not just text
-    currentLocation = models.CharField(max_length=200) #todo: Needs to be a Location, not just text
+    primaryLocation = models.CharField(max_length=200, default='') #todo: Needs to be a Location, not just text
+    currentLocation = models.CharField(max_length=200, default='') #todo: Needs to be a Location, not just text
     hideLocation = models.BooleanField(default=False)
     isBanned = models.BooleanField(default=False)
 

@@ -3,7 +3,7 @@ from .models.person import Person
 from .models.event import Event
 from rest_framework import serializers
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
 
 	password = serializers.CharField(write_only=True)
 
@@ -23,9 +23,27 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 		fields = ('id','username','email', 'password')
 
 
-
-class PersonSerializer(serializers.HyperlinkedModelSerializer):
+#--------------------------------------------------------------------
+#
+#	PersonSerializer
+#		Serializes a Person (personal account) model. 
+#
+#		create method will "pop" the 'user' dict from the valid_data,
+#		use it to create a new User, and then will use the new 
+#		user and the rest of the valid_data to create a new Person
+#		Account. 
+#
+#---------------------------------------------------------------------
+class PersonSerializer(serializers.ModelSerializer):
 	user = UserSerializer()
+	
+	def create(self, valid_data):
+		user_data = valid_data.pop('user')
+		n_user = User.objects.create(**user_data)
+		person = Person.objects.create(user=n_user,**valid_data)
+		person.save()
+
+		return person
 
 	class Meta:
 		model = Person
