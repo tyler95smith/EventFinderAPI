@@ -32,6 +32,7 @@ class PersonSerializer(serializers.HyperlinkedModelSerializer):
 		fields = ('id', 'user', 'date_of_birth', 'bio', 'primaryLocation', 'currentLocation', 'hideLocation')
 
 class EventSerializer(serializers.HyperlinkedModelSerializer):
+
 	class Meta:
 		model = Event
-		fields = ('id', 'date_created', 'event_name', 'location')
+		fields = ('id', 'date_created', 'event_name', 'location', 'event_date', 'description', 'age_min', 'age_max')
