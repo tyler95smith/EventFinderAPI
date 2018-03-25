@@ -75,7 +75,37 @@ class GetPastEvents(APIView):
 		events = Event.objects.filter(attendees=req_user, event_date__lt=datetime.date.today())
 		serializer = EventSerializer(events, many=True)
 		return Response(serializer.data)
+
+#
+# api end point to get future events of a specific user
+#
+# TODO: add error handling for when the provided values are not the correct type
+class GetFutureEvents(APIView):
+	def get(self, request, format='json'):
+		# if no 'host' value is sent in the request default to zero
+		req_user = request.query_params.get('user', 0)
+		# if the host value is not the correct type return error
+		#if not isinstance(req_user, int):
+		#	return Response("Error: The host value must be an integer id")
+		events = Event.objects.filter(attendees=req_user, event_date__gte=datetime.date.today())
+		serializer = EventSerializer(events, many=True)
+		return Response(serializer.data)
 		
+#
+# api end point to get events hosted by a specific user
+#
+# TODO: add error handling for when the provided values are not the correct type
+class GetMyEvents(APIView):
+	def get(self, request, format='json'):
+		# if no 'host' value is sent in the request default to zero
+		req_user = request.query_params.get('user', 0)
+		# if the host value is not the correct type return error
+		#if not isinstance(req_user, int):
+		#	return Response("Error: The host value must be an integer id")
+		events = Event.objects.filter(host=req_user)
+		serializer = EventSerializer(events, many=True)
+		return Response(serializer.data)
+
 #
 # api end point to list all accounts of type 'person'... 	
 class ListPersons(APIView):	
