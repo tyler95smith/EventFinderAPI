@@ -10,7 +10,7 @@ from .serializers import EventSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-import datetime
+from datetime import datetime
 
 #
 # To test api
