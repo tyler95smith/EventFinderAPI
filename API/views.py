@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from datetime import datetime
+import datetime # dont remove needed to import this way for the datetime.date.today()
 
 #
 # To test api
@@ -149,5 +150,46 @@ class CreatePersonAccount(APIView):
 			if person:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response("Input was not valid")	#TODO: May need to return a status code in the event of invalid input
+
+#---------------------------------------------------------------
+#
+#	UpdatePersonAccount(APIView):
+#		api end point for updating a user with a personal
+#		account (person). 
+#		
+#		Expects a json representation of person object to be 
+#		created. The serializer will take care of making sense 
+#		of the fields if they are valid.
+#		
+#		The following format is expected:
+#		{
+#		 "id": "3",
+#        "user": {
+#            "username": "someusername",
+#            "email": "example@exmpl.com",
+#            "password": "notagoodpassword"
+#        },
+#        "date_of_birth": "1998-09-04",
+#        "bio": "Yeah. this is a good bio..",
+#        "primaryLocation": "San Diego, CA",
+#        "currentLocation": "Los Angeles, CA",
+#        "hideLocation": false
+#    	}
+#
+#    {"id": "2"}
+#			
+#----------------------------------------------------------------
+class UpdatePersonAccount(APIView):
+	def put(self, request, format='json'):
+		p_id = request.data.get('id')
+		p_instance = Person.objects.get(pk=p_id) #person id not user id
+
+		serializer = PersonSerializer(p_instance,data=request.data)
+
+		if serializer.is_valid():
+			person = serializer.save()
+			if person:
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors)
 
 

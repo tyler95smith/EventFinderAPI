@@ -10,5 +10,6 @@ urlpatterns = [
     path('api/getfutureevents/', views.GetFutureEvents.as_view(), name='get-future-events'),
     path('api/getmyevents/', views.GetMyEvents.as_view(), name='get-my-events'),
 	path('api/personslist/', views.ListPersons.as_view(), name='list-persons'),
-	path('api/createpersonaccount/', views.CreatePersonAccount.as_view(), name='create-person-account')
+	path('api/createpersonaccount/', views.CreatePersonAccount.as_view(), name='create-person-account'),
+	path('api/updatepersonaccount/', views.UpdatePersonAccount.as_view(), name='update-person-account')
 ]
