@@ -13,6 +13,19 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from datetime import datetime
 import datetime # dont remove needed to import this way for the datetime.date.today()
 
+from django.shortcuts import render
+import os
+# Create your views here.
+def ManageIndex(request):
+    return render(request, 'API/manage_home.html')
+
+def ManageEvents(request):
+	return render(request, 'API/manage_events.html')
+
+class TempResult(APIView):
+	def get(self, request, format='json'):
+		BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+		return Response(BASE_DIR)
 #
 # To test api
 class TestAPIView(APIView):
