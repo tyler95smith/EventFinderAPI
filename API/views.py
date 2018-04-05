@@ -40,10 +40,11 @@ class ListUsers(APIView):
 		serializer = UserSerializer(users, many=True)
 		return Response(serializer.data)
 
-#
-# api end point to create a user (without account)...
-# to create user send data in following json format via post...
-# {"username": "taylor789", "email": "example@ex.com", "password":"iwejfoiwejfdk"}
+'''
+ api end point to create a user (without account)...
+ to create user send data in following json format via post...
+ {"username": "taylor789", "email": "example@ex.com", "password":"iwejfoiwejfdk"}
+'''
 class CreateUser(APIView):
 	def post(self, request, format='json'):
 		serializer = UserSerializer(data=request.data)
@@ -52,12 +53,13 @@ class CreateUser(APIView):
 			if user:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-#
-# Note: when calling ActivateUser in the future we will need to check whether 
-#		the account is a person or business account type. If this were a 
-#		business account being activated, u.person would not exist as the
-#		account type for the user would be a business account. For now it's 
-#		fine since there is only one account type that can belong to a user.
+'''
+ Note: when calling ActivateUser in the future we will need to check whether 
+		the account is a person or business account type. If this were a 
+		business account being activated, u.person would not exist as the
+		account type for the user would be a business account. For now it's 
+		fine since there is only one account type that can belong to a user.
+'''
 class ActivateUser(APIView):
     def get(self, request, format='none'):
         u = User.objects.get(id=request.GET.get('id'))
@@ -75,13 +77,13 @@ class ActivateUser(APIView):
             else:
                 return Response("Error: This token appears to be old or invalid.")
 
-#------------------------------------------------------
-#	Update User Password Endpoint
-#		JSON fields expected:
-#		    "id" (user object id)
-#		    "old_password"
-#		    "new_password"
-#------------------------------------------------------
+'''
+	Update User Password Endpoint
+		JSON fields expected:
+		    "id" (user object id)
+		    "old_password"
+		    "new_password"
+'''
 class UpdatePassword(APIView):
     def put(self, request, format='json'):
         serialized = UpdatePasswordSerializer(data=request.data)
@@ -97,9 +99,9 @@ class UpdatePassword(APIView):
                 return Response("User id does not exist.", status=status.HTTP_400_BAD_REQUEST)
         return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#
-# api end point to get past events of a specific user
-#
+'''
+ api end point to get past events of a specific user
+'''
 # TODO: add error handling for when the provided values are not the correct type
 class GetPastEvents(APIView):
 	def get(self, request, format='json'):
@@ -112,9 +114,9 @@ class GetPastEvents(APIView):
 		serializer = EventSerializer(events, many=True)
 		return Response(serializer.data)
 
-#
-# api end point to get future events of a specific user
-#
+'''
+ api end point to get future events of a specific user
+'''
 # TODO: add error handling for when the provided values are not the correct type
 class GetFutureEvents(APIView):
 	def get(self, request, format='json'):
@@ -127,9 +129,9 @@ class GetFutureEvents(APIView):
 		serializer = EventSerializer(events, many=True)
 		return Response(serializer.data)
 		
-#
-# api end point to get events hosted by a specific user
-#
+'''
+ api end point to get events hosted by a specific user
+'''
 # TODO: add error handling for when the provided values are not the correct type
 class GetMyEvents(APIView):
 	def get(self, request, format='json'):
@@ -184,34 +186,33 @@ class CreatePersonAccount(APIView):
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response("Input was not valid: %s" % serializer.errors)	#TODO: May need to return a status code in the event of invalid input
 
-#---------------------------------------------------------------
-#
-#	UpdatePersonAccount(APIView):
-#		api end point for updating a user with a personal
-#		account (person). 
-#		
-#		Expects a json representation of person object to be 
-#		created. The serializer will take care of making sense 
-#		of the fields if they are valid.
-#		
-#		The following format is expected:
-#		{
-#		 "id": "3",
-#        "user": {
-#            "username": "someusername",
-#            "email": "example@exmpl.com",
-#            "password": "notagoodpassword"
-#        },
-#        "date_of_birth": "1998-09-04",
-#        "bio": "Yeah. this is a good bio..",
-#        "primaryLocation": "San Diego, CA",
-#        "currentLocation": "Los Angeles, CA",
-#        "hideLocation": false
-#    	}
-#
-#    {"id": "2"}
-#			
-#----------------------------------------------------------------
+'''
+	UpdatePersonAccount(APIView):
+		api end point for updating a user with a personal
+		account (person). 
+		
+		Expects a json representation of person object to be 
+		created. The serializer will take care of making sense 
+		of the fields if they are valid.
+		
+		The following format is expected:
+		{
+		 "id": "3",
+        "user": {
+            "username": "someusername",
+            "email": "example@exmpl.com",
+            "password": "notagoodpassword"
+        },
+        "date_of_birth": "1998-09-04",
+        "bio": "Yeah. this is a good bio..",
+        "primaryLocation": "San Diego, CA",
+        "currentLocation": "Los Angeles, CA",
+        "hideLocation": false
+    	}
+
+    {"id": "2"}
+
+'''		
 class UpdatePersonAccount(APIView):
 	def put(self, request, format='json'):
 		p_id = request.data.get('id')
