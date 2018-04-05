@@ -85,7 +85,7 @@ class ActivateUser(APIView):
 class GetPerson(APIView):
     def get(self, request, id, format='none'):
         try:
-            p = Person.objects.get(pk=self.kwargs['id'])
+            p = Person.objects.get(pk=id)
             serializer = PersonSerializer(p)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Person.DoesNotExist:
