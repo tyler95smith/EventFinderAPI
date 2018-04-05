@@ -1,11 +1,14 @@
 from django.urls import path
+from django.conf.urls import include
 from . import views
 from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework_swagger.views import get_swagger_view
 
 urlpatterns = [
     # ex: /admin/
     path('manage/', views.ManageIndex, name='index'),
     path('manage/event/', views.ManageEvents, name='event'),
+    path('api/', get_swagger_view(title="EventFinder API")),
     path('api/test/', views.TestAPIView.as_view(), name='test-api'),
     path('api/userlist/', views.ListUsers.as_view(), name='list-users'),
     path('api/createuser/', views.CreateUser.as_view(), name='create-user'),
@@ -17,5 +20,6 @@ urlpatterns = [
     path('api/createpersonaccount/', views.CreatePersonAccount.as_view(), name='create-person-account'),
     path('api/updatepersonaccount/', views.UpdatePersonAccount.as_view(), name='update-person-account'),
     path('api/updatepassword/', views.UpdatePassword.as_view(), name='update-password'),
-    path('api/login/', obtain_jwt_token)
+    path('api/login/', obtain_jwt_token),
+    path('api/weblogin/', include('rest_framework.urls'))
 ]
