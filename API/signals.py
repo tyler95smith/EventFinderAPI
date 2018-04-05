@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
+
 @receiver(pre_save, sender=User)
 def set_new_user_active_false(sender, instance, *args, **kwargs):
     if not instance.pk and not instance.is_superuser:

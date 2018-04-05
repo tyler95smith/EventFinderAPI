@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from .models.person import Person
 from .models.event import Event
 from .models.interests import Interests
@@ -13,8 +14,9 @@ class UserSerializer(serializers.ModelSerializer):
 		user = User.objects.create(
 				username=valid_data['username'],
 				email=valid_data['email'],
+                password=make_password(valid_data['password'])
 			)
-		user.set_password(valid_data['password'])
+		#user.set_password(make_password(valid_data['password']))
 		user.save()
 
 		return user
@@ -40,7 +42,7 @@ class PersonSerializer(serializers.ModelSerializer):
 	
 	def create(self, valid_data):
 		user_data = valid_data.pop('user')
-		n_user = User.objects.create(**user_data)
+		n_user = User.objects.create_user(**user_data)
 		person = Person.objects.create(user=n_user,**valid_data)
 		person.save()
 
