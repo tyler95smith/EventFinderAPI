@@ -11,7 +11,6 @@ from .serializers import UpdatePasswordSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from datetime import datetime
 import datetime # dont remove needed to import this way for the datetime.date.today()
 
 from django.shortcuts import render
@@ -70,7 +69,7 @@ class ActivateUser(APIView):
             g = PasswordResetTokenGenerator()
             if g.check_token(u, request.GET.get('token')):
                 u.is_active = True
-                u.last_login = datetime.now() # We need to change something to invalidate the token.
+                u.last_login = datetime.datetime.now() # We need to change something to invalidate the token.
                 u.save()
                 return Response("Success.  The account for %s is now active!" % (u.username))
             else:
@@ -150,33 +149,31 @@ class ListPersons(APIView):
 		persons = Person.objects.all()
 		serializer = PersonSerializer(persons, many=True)
 		return Response(serializer.data)
+	
+'''	
+	CreatePersonAccount(APIView):
+		api end point for creating a new user with a personal
+		account (person). This API post call will create both
+		a new user AND a new person account for that user.
 		
-#---------------------------------------------------------------
-#
-#	CreatePersonAccount(APIView):
-#		api end point for creating a new user with a personal
-#		account (person). This API post call will create both
-#		a new user AND a new person account for that user.
-#		
-#		Expects a json representation of person object to be 
-#		created. The serializer will take care of making sense 
-#		of the fields if they are valid.
-#		
-#		The following format is expected:
-#		{
-#        "user": {
-#            "username": "someusername",
-#            "email": "example@exmpl.com",
-#            "password": "notagoodpassword"
-#        },
-#        "date_of_birth": "1998-09-04",
-#        "bio": "Yeah. this is a good bio..",
-#        "primaryLocation": "San Diego, CA",
-#        "currentLocation": "Los Angeles, CA",
-#        "hideLocation": false
-#    	}
-#			
-#----------------------------------------------------------------
+		Expects a json representation of person object to be 
+		created. The serializer will take care of making sense 
+		of the fields if they are valid.
+		
+		The following format is expected:
+		{
+        "user": {
+            "username": "someusername",
+            "email": "example@exmpl.com",
+            "password": "notagoodpassword"
+        },
+        "date_of_birth": "1998-09-04",
+        "bio": "Yeah. this is a good bio..",
+        "primaryLocation": "San Diego, CA",
+        "currentLocation": "Los Angeles, CA",
+        "hideLocation": false
+    	}			
+'''
 class CreatePersonAccount(APIView):
 	def post(self, request, format='json'):
 		serializer = PersonSerializer(data=request.data)
@@ -185,7 +182,7 @@ class CreatePersonAccount(APIView):
 			person = serializer.save()
 			if person:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response("Input was not valid")	#TODO: May need to return a status code in the event of invalid input
+		return Response("Input was not valid: %s" % serializer.errors)	#TODO: May need to return a status code in the event of invalid input
 
 #---------------------------------------------------------------
 #

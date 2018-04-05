@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
     # ex: /admin/
@@ -15,5 +16,6 @@ urlpatterns = [
     path('api/personslist/', views.ListPersons.as_view(), name='list-persons'),
     path('api/createpersonaccount/', views.CreatePersonAccount.as_view(), name='create-person-account'),
     path('api/updatepersonaccount/', views.UpdatePersonAccount.as_view(), name='update-person-account'),
-    path('api/updatepassword/', views.UpdatePassword.as_view(), name='update-password')
+    path('api/updatepassword/', views.UpdatePassword.as_view(), name='update-password'),
+    path('api/login/', obtain_jwt_token)
 ]
