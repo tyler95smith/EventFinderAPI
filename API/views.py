@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from .serializers import PersonSerializer
 from .serializers import UserSerializer
 from .serializers import EventSerializer
+from .serializers import UpdatePasswordSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -33,16 +34,16 @@ class TestAPIView(APIView):
 		return Response("It's working! Hello from the API.")
 
 #
-# api end point to list all users... 	
-class ListUsers(APIView):	
+# api end point to list all users...
+class ListUsers(APIView):
 	def get(self, request, format='json'):
 		users = User.objects.all()
 		serializer = UserSerializer(users, many=True)
 		return Response(serializer.data)
 
 #
-# api end point to create a user (without account)... 
-# to create user send data in following json format via post...	
+# api end point to create a user (without account)...
+# to create user send data in following json format via post...
 # {"username": "taylor789", "email": "example@ex.com", "password":"iwejfoiwejfdk"}
 class CreateUser(APIView):
 	def post(self, request, format='json'):
@@ -74,6 +75,28 @@ class ActivateUser(APIView):
                 return Response("Success.  The account for %s is now active!" % (u.username))
             else:
                 return Response("Error: This token appears to be old or invalid.")
+
+#------------------------------------------------------
+#	Update User Password Endpoint
+#		JSON fields expected:
+#		    "id" (user object id)
+#		    "old_password"
+#		    "new_password"
+#------------------------------------------------------
+class UpdatePassword(APIView):
+    def put(self, request, format='json'):
+        serialized = UpdatePasswordSerializer(data=request.data)
+        if serialized.is_valid():
+            try:
+                user = User.objects.get(id=serialized.data.get("id"))
+                if not user.check_password(serialized.data.get("old_password")):
+                    return Response({"old_password": "Wrong password."}, status=status.HTTP_400_BAD_REQUEST)
+                user.set_password(serialized.data.get("new_password"))
+                user.save()
+                return Response("Success.", status=status.HTTP_200_OK)
+            except User.DoesNotExist:
+                return Response("User id does not exist.", status=status.HTTP_400_BAD_REQUEST)
+        return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
 #
 # api end point to get past events of a specific user

@@ -12,7 +12,8 @@ urlpatterns = [
     path('api/getpastevents/', views.GetPastEvents.as_view(), name='get-past-events'),
     path('api/getfutureevents/', views.GetFutureEvents.as_view(), name='get-future-events'),
     path('api/getmyevents/', views.GetMyEvents.as_view(), name='get-my-events'),
-	path('api/personslist/', views.ListPersons.as_view(), name='list-persons'),
-	path('api/createpersonaccount/', views.CreatePersonAccount.as_view(), name='create-person-account'),
-	path('api/updatepersonaccount/', views.UpdatePersonAccount.as_view(), name='update-person-account')
+    path('api/personslist/', views.ListPersons.as_view(), name='list-persons'),
+    path('api/createpersonaccount/', views.CreatePersonAccount.as_view(), name='create-person-account'),
+    path('api/updatepersonaccount/', views.UpdatePersonAccount.as_view(), name='update-person-account'),
+    path('api/updatepassword/', views.UpdatePassword.as_view(), name='update-password')
 ]

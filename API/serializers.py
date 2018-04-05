@@ -23,7 +23,13 @@ class UserSerializer(serializers.ModelSerializer):
 		model = User
 		fields = ('id','username','email', 'password')
 
-
+#--------------------------------------------------------------------
+#    Serializer for updating a User's password endpoint. 
+#--------------------------------------------------------------------
+class UpdatePasswordSerializer(serializers.Serializer):
+	old_password = serializers.CharField(required=True)
+	new_password = serializers.CharField(required=True)
+	id = serializers.IntegerField(required=True)
 #--------------------------------------------------------------------
 #
 #	PersonSerializer
