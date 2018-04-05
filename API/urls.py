@@ -21,5 +21,6 @@ urlpatterns = [
     path('api/updatepersonaccount/', views.UpdatePersonAccount.as_view(), name='update-person-account'),
     path('api/updatepassword/', views.UpdatePassword.as_view(), name='update-password'),
     path('api/login/', obtain_jwt_token),
-    path('api/weblogin/', include('rest_framework.urls'))
+    path('api/weblogin/', include('rest_framework.urls')),
+    path('api/getperson/<int:id>/', views.GetPerson.as_view(), name='get-person-by-id')
 ]

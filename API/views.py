@@ -78,6 +78,20 @@ class ActivateUser(APIView):
                 return Response("Error: This token appears to be old or invalid.")
 
 '''
+	End point for getting Person Account info from Person 'id'
+		JSON fields expected:
+
+'''
+class GetPerson(APIView):
+    def get(self, request, id, format='none'):
+        try:
+            p = Person.objects.get(pk=self.kwargs['id'])
+            serializer = PersonSerializer(p)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Person.DoesNotExist:
+            return Response("Person id does not exist.", status=status.HTTP_400_BAD_REQUEST)
+
+'''
 	Update User Password Endpoint
 		JSON fields expected:
 		    "id" (user object id)
