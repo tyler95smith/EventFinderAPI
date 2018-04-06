@@ -11,6 +11,7 @@ from .serializers import UpdatePasswordSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from rest_framework.decorators import authentication_classes, permission_classes
 import datetime # dont remove needed to import this way for the datetime.date.today()
 
 from django.shortcuts import render
@@ -45,6 +46,7 @@ class ListUsers(APIView):
  to create user send data in following json format via post...
  {"username": "taylor789", "email": "example@ex.com", "password":"iwejfoiwejfdk"}
 '''
+@permission_classes([])
 class CreateUser(APIView):
 	def post(self, request, format='json'):
 		serializer = UserSerializer(data=request.data)
@@ -60,6 +62,7 @@ class CreateUser(APIView):
 		account type for the user would be a business account. For now it's 
 		fine since there is only one account type that can belong to a user.
 '''
+@permission_classes([])
 class ActivateUser(APIView):
     def get(self, request, format='none'):
         u = User.objects.get(id=request.GET.get('id'))
@@ -82,7 +85,6 @@ class ActivateUser(APIView):
 		JSON fields expected:
 
 '''
-
 class ValidateEmail(APIView):
 	def get(self, request, format='json'):
 		try:
@@ -208,6 +210,7 @@ class ListPersons(APIView):
         "hideLocation": false
     	}			
 '''
+@permission_classes([])
 class CreatePersonAccount(APIView):
 	def post(self, request, format='json'):
 		serializer = PersonSerializer(data=request.data)
