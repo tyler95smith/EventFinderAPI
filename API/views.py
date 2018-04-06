@@ -82,6 +82,24 @@ class ActivateUser(APIView):
 		JSON fields expected:
 
 '''
+
+class ValidateEmail(APIView):
+	def get(self, request, format='json'):
+		try:
+			u = User.objects.get(email=request.GET.get('email'))
+			return Response("Email Already Exists", status=status.HTTP_400_BAD_REQUEST)
+		except User.DoesNotExist:
+			return Response("Email is Unique", status=status.HTTP_200_OK)
+		
+class ValidateUsername(APIView):
+	def get(self, request, format='json'):
+		try:
+			u = User.objects.get(username=request.GET.get('username'))
+			return Response("Email Already Exists", status=status.HTTP_400_BAD_REQUEST)
+		except User.DoesNotExist:
+			return Response("Email is Unique", status=status.HTTP_200_OK)
+
+
 class GetPerson(APIView):
     def get(self, request, id, format='none'):
         try:
