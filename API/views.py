@@ -245,7 +245,7 @@ class CreatePersonAccount(APIView):
 
 '''		
 class UpdatePersonAccount(APIView):
-	def put(self, request, format='json'):
+	def patch(self, request, format='json'):
 		p_id = request.data.get('id')
 		p_instance = Person.objects.get(pk=p_id) #person id not user id
 
@@ -256,6 +256,7 @@ class UpdatePersonAccount(APIView):
 			if person:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
+		#return Response(p_instance.user.first_name)
 
 class CreateEvent(APIView):
 	def post(self, request, format='json'):

@@ -57,7 +57,7 @@ class PersonSerializer(serializers.ModelSerializer):
 	def update(self, instance, valid_data):
 		user_data = valid_data.pop('user') # get user information
 		user_inst = getattr(instance, 'user') # get the person's user model and update it
-		user_inst.first_name = user_data.get('name');
+		user_inst.first_name = user_data.get('name', user_inst.first_name);
 		#user_inst.username = user_data.get('username', user_inst.username)
 		#user_inst.email = user_data.get('email', user_inst.email)
 		#instance.user.password = user_data.get('password') # before i created this custom update function password was required?
