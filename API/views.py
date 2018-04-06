@@ -213,9 +213,9 @@ class CreatePersonAccount(APIView):
 		{
 		 "id": "3",
         "user": {
+        	"name": "John",
             "username": "someusername",
-            "email": "example@exmpl.com",
-            "password": "notagoodpassword"
+            "email": "example@exmpl.com"
         },
         "date_of_birth": "1998-09-04",
         "bio": "Yeah. this is a good bio..",
@@ -224,7 +224,6 @@ class CreatePersonAccount(APIView):
         "hideLocation": false
     	}
 
-    {"id": "2"}
 
 '''		
 class UpdatePersonAccount(APIView):
