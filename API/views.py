@@ -178,6 +178,18 @@ class GetMyEvents(APIView):
 		serializer = EventSerializer(events, many=True)
 		return Response(serializer.data)
 
+'''
+ api end point to get n most recently added events
+	make call by /getrecentevents/count/ 
+	where count is the number of recent events to return
+'''
+class GetRecentEvents(APIView):
+	def get(self, request, count, format='json'):
+		events = Event.objects.order_by('-date_created')[:count]
+		serializer = EventSerializer(events, many=True)
+		return Response(serializer.data)
+
+		
 #
 # api end point to list all accounts of type 'person'... 	
 class ListPersons(APIView):	
@@ -234,9 +246,9 @@ class CreatePersonAccount(APIView):
 		{
 		 "id": "3",
         "user": {
+        	"name": "John",
             "username": "someusername",
-            "email": "example@exmpl.com",
-            "password": "notagoodpassword"
+            "email": "example@exmpl.com"
         },
         "date_of_birth": "1998-09-04",
         "bio": "Yeah. this is a good bio..",
@@ -245,11 +257,10 @@ class CreatePersonAccount(APIView):
         "hideLocation": false
     	}
 
-    {"id": "2"}
 
 '''		
 class UpdatePersonAccount(APIView):
-	def put(self, request, format='json'):
+	def patch(self, request, format='json'):
 		p_id = request.data.get('id')
 		p_instance = Person.objects.get(pk=p_id) #person id not user id
 
@@ -260,5 +271,13 @@ class UpdatePersonAccount(APIView):
 			if person:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
+		#return Response(p_instance.user.first_name)
 
-
+class CreateEvent(APIView):
+	def post(self, request, format='json'):
+		serializer = EventSerializer(data=request.data)
+		if serializer.is_valid():
+			event = serializer.save()
+			if event:
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
