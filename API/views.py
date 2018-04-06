@@ -176,6 +176,18 @@ class GetMyEvents(APIView):
 		serializer = EventSerializer(events, many=True)
 		return Response(serializer.data)
 
+'''
+ api end point to get n most recently added events
+	make call by /getrecentevents/count/ 
+	where count is the number of recent events to return
+'''
+class GetRecentEvents(APIView):
+	def get(self, request, count, format='json'):
+		events = Event.objects.order_by('-date_created')[:count]
+		serializer = EventSerializer(events, many=True)
+		return Response(serializer.data)
+
+		
 #
 # api end point to list all accounts of type 'person'... 	
 class ListPersons(APIView):	
