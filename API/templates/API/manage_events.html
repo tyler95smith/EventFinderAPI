@@ -11,29 +11,45 @@
   <p>Resize this responsive page to see the effect!</p>
 </div>
 
-<ul class="nav nav-tabs">
-  <li class="active"><a href="#">Home</a></li>
-  <li><a href="#">Menu 1</a></li>
-  <li><a href="#">Menu 2</a></li>
-  <li><a href="#">Menu 3</a></li>
-</ul>
-
 <div class="container">
+	<ul class="nav nav-tabs">
+	  <li><a href="/manage">Home</a></li>
+	  <li class="active"><a href="#">Events</a></li>
+	  <li><a href="#">Users</a></li>	</ul>
+	
 	<div class="row">
-	    <div class="col-sm-4">
-		    <h3>Column 1</h3>
-		    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-		    <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-	    </div>
-	    <div class="col-sm-4">
-	        <h3>Column 2</h3>
-	        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-	        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-	    </div>
-	    <div class="col-sm-4">
-	        <h3>Column 3</h3>        
-	        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-	        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-	    </div>
-  	</div> <!-- end "row" -->
+		<div class="table-responsive">
+	  		<table class="table">
+	  			<tr>
+	  				<th>Event ID</th>
+	  				<th>Event Name</th>
+	  				<th>Event Host</th>
+	  				<th>Report Count</th>
+	  				<th>Manage</th>
+	  			</tr>
+	  			<tr>
+	  				<td>223</td>
+	  				<td>Bonfire at Sandy</td>
+	  				<td>Jane Red</td>
+	  				<td>200</td>
+	  				<td><button type="button" class="btn btn-primary">Manage</button></td>
+	  			</tr>
+	  			<tr>
+	  				<td>332</td>
+	  				<td>Hike Timp</td>
+	  				<td>John Crantz</td>
+	  				<td>12</td>
+	  				<td><button type="button" class="btn btn-primary">Manage</button></td>
+	  			</tr>
+	  			<tr>
+	  				<td>160</td>
+	  				<td>Sundace Skiing and Boarding</td>
+	  				<td>Tim Horton</td>
+	  				<td>42</td>
+	  				<td><button type="button" class="btn btn-primary">Manage</button></td>
+	  			</tr>
+	  		</table>
+  		</div> <!-- end "table-responsive"-->
+
+	</div>
 </div> <!-- end "container" -->
