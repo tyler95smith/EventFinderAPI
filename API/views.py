@@ -14,7 +14,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.decorators import authentication_classes, permission_classes
 import datetime # dont remove needed to import this way for the datetime.date.today()
 
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 import os
 # Create your views here.
 def ManageIndex(request):
@@ -22,6 +22,19 @@ def ManageIndex(request):
 
 def ManageEvents(request):
 	return render(request, 'API/manage_events.html')
+
+def ManageUsers(request):
+	return render(request, 'API/manage_users.html')
+
+def EventDetail(request, event_id):
+	event = get_object_or_404(Event, pk=event_id)
+	context={'event': event}
+	return render(request, 'API/manage_event_detail.html', context)
+
+def UserDetail(request, person_id):
+	person = get_object_or_404(Person, pk=person_id)
+	context={'person': person}
+	return render(request, 'API/manage_user_detail.html')
 
 class TempResult(APIView):
 	def get(self, request, format='json'):

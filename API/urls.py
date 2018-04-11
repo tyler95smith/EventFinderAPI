@@ -6,8 +6,11 @@ from rest_framework_swagger.views import get_swagger_view
 
 urlpatterns = [
     # ex: /admin/
-    path('manage/', views.ManageIndex, name='index'),
-    path('manage/event/', views.ManageEvents, name='event'),
+    path('manage/', views.ManageIndex, name='manage-index'),
+    path('manage/events/', views.ManageEvents, name='manage-events'),
+    path('manage/events/<int:event_id>/', views.EventDetail, name='event-detail'),
+    path('manage/users/', views.ManageUsers, name='manage-users'),
+    path('manage/users/<int:user_id>/', views.UserDetail, name='user-detail'),
     path('api/', get_swagger_view(title="EventFinder API")),
     path('api/test/', views.TestAPIView.as_view(), name='test-api'),
     path('api/userlist/', views.ListUsers.as_view(), name='list-users'),

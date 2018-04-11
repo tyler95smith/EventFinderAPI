@@ -1,0 +1,23 @@
+{% load static %}
+
+<head>
+    <title>Home Page</title>
+    <link rel="stylesheet" href="{% static 'API/bootstrap/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'API/style.css' %}">
+</head>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Event Finder</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="/manage/">Home</a></li>
+      <li><a href="/manage/events/">Events</a></li>
+      <li class="active"><a href="/manage/users/">Users</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+    	<li><a href="#"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+    </ul>
+  </div>
+</nav>
