@@ -6,8 +6,11 @@ from rest_framework_swagger.views import get_swagger_view
 
 urlpatterns = [
     # ex: /admin/
-    path('manage/', views.ManageIndex, name='index'),
-    path('manage/event/', views.ManageEvents, name='event'),
+    path('manage/', views.ManageIndex, name='manage-index'),
+    path('manage/events/', views.ManageEvents, name='manage-events'),
+    path('manage/events/<int:event_id>/', views.EventDetail, name='event-detail'),
+    path('manage/users/', views.ManageUsers, name='manage-users'),
+    path('manage/users/<int:user_id>/', views.UserDetail, name='user-detail'),
     path('api/', get_swagger_view(title="EventFinder API")),
     path('api/test/', views.TestAPIView.as_view(), name='test-api'),
     path('api/userlist/', views.ListUsers.as_view(), name='list-users'),
@@ -27,5 +30,6 @@ urlpatterns = [
     path('api/token/refresh/', refresh_jwt_token),
     path('api/weblogin/', include('rest_framework.urls')),
     path('api/getperson/<int:id>/', views.GetPerson.as_view(), name='get-person-by-id'),
-	path('api/createevent/', views.CreateEvent.as_view(), name='create-event')
+	path('api/createevent/', views.CreateEvent.as_view(), name='create-event'),
+	path('api/getrecentevents/<int:count>/', views.GetRecentEvents.as_view(), name='getrecentevents')
 ]

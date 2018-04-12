@@ -3,6 +3,7 @@ from rest_framework.views import APIView	# class based views
 from rest_framework.decorators import api_view	# function based views
 from API.models import Person
 from API.models import Event
+from API.models import Report
 from django.contrib.auth.models import User
 from .serializers import PersonSerializer
 from .serializers import UserSerializer
@@ -11,16 +12,33 @@ from .serializers import UpdatePasswordSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from rest_framework.decorators import authentication_classes, permission_classes
 import datetime # dont remove needed to import this way for the datetime.date.today()
 
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+from django.db.models import Count, Q
 import os
 # Create your views here.
 def ManageIndex(request):
     return render(request, 'API/manage_home.html')
 
 def ManageEvents(request):
-	return render(request, 'API/manage_events.html')
+	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all())))
+	context={'event_list': event_list}
+	return render(request, 'API/manage_events.html', context)
+
+def ManageUsers(request):
+	return render(request, 'API/manage_users.html')
+
+def EventDetail(request, event_id):
+	event = get_object_or_404(Event, pk=event_id)
+	context={'event': event}
+	return render(request, 'API/manage_event_detail.html', context)
+
+def UserDetail(request, person_id):
+	person = get_object_or_404(Person, pk=person_id)
+	context={'person': person}
+	return render(request, 'API/manage_user_detail.html')
 
 class TempResult(APIView):
 	def get(self, request, format='json'):
@@ -45,6 +63,7 @@ class ListUsers(APIView):
  to create user send data in following json format via post...
  {"username": "taylor789", "email": "example@ex.com", "password":"iwejfoiwejfdk"}
 '''
+@permission_classes([])
 class CreateUser(APIView):
 	def post(self, request, format='json'):
 		serializer = UserSerializer(data=request.data)
@@ -60,6 +79,7 @@ class CreateUser(APIView):
 		account type for the user would be a business account. For now it's 
 		fine since there is only one account type that can belong to a user.
 '''
+@permission_classes([])
 class ActivateUser(APIView):
     def get(self, request, format='none'):
         u = User.objects.get(id=request.GET.get('id'))
@@ -82,7 +102,6 @@ class ActivateUser(APIView):
 		JSON fields expected:
 
 '''
-
 class ValidateEmail(APIView):
 	def get(self, request, format='json'):
 		try:
@@ -176,6 +195,18 @@ class GetMyEvents(APIView):
 		serializer = EventSerializer(events, many=True)
 		return Response(serializer.data)
 
+'''
+ api end point to get n most recently added events
+	make call by /getrecentevents/count/ 
+	where count is the number of recent events to return
+'''
+class GetRecentEvents(APIView):
+	def get(self, request, count, format='json'):
+		events = Event.objects.order_by('-date_created')[:count]
+		serializer = EventSerializer(events, many=True)
+		return Response(serializer.data)
+
+		
 #
 # api end point to list all accounts of type 'person'... 	
 class ListPersons(APIView):	
@@ -208,6 +239,7 @@ class ListPersons(APIView):
         "hideLocation": false
     	}			
 '''
+@permission_classes([])
 class CreatePersonAccount(APIView):
 	def post(self, request, format='json'):
 		serializer = PersonSerializer(data=request.data)
@@ -231,9 +263,9 @@ class CreatePersonAccount(APIView):
 		{
 		 "id": "3",
         "user": {
+        	"name": "John",
             "username": "someusername",
-            "email": "example@exmpl.com",
-            "password": "notagoodpassword"
+            "email": "example@exmpl.com"
         },
         "date_of_birth": "1998-09-04",
         "bio": "Yeah. this is a good bio..",
@@ -242,11 +274,10 @@ class CreatePersonAccount(APIView):
         "hideLocation": false
     	}
 
-    {"id": "2"}
 
 '''		
 class UpdatePersonAccount(APIView):
-	def put(self, request, format='json'):
+	def patch(self, request, format='json'):
 		p_id = request.data.get('id')
 		p_instance = Person.objects.get(pk=p_id) #person id not user id
 
@@ -257,6 +288,7 @@ class UpdatePersonAccount(APIView):
 			if person:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
+		#return Response(p_instance.user.first_name)
 
 class CreateEvent(APIView):
 	def post(self, request, format='json'):
