@@ -3,6 +3,7 @@ from rest_framework.views import APIView	# class based views
 from rest_framework.decorators import api_view	# function based views
 from API.models import Person
 from API.models import Event
+from API.models import Report
 from django.contrib.auth.models import User
 from .serializers import PersonSerializer
 from .serializers import UserSerializer
@@ -15,13 +16,16 @@ from rest_framework.decorators import authentication_classes, permission_classes
 import datetime # dont remove needed to import this way for the datetime.date.today()
 
 from django.shortcuts import get_object_or_404, render
+from django.db.models import Count, Q
 import os
 # Create your views here.
 def ManageIndex(request):
     return render(request, 'API/manage_home.html')
 
 def ManageEvents(request):
-	return render(request, 'API/manage_events.html')
+	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all())))
+	context={'event_list': event_list}
+	return render(request, 'API/manage_events.html', context)
 
 def ManageUsers(request):
 	return render(request, 'API/manage_users.html')
