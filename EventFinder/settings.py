@@ -14,7 +14,8 @@ import datetime
 import os
 
 #email uniqueness
-from django.contrib.auth.models import User, models
+import User
+import models
 User._meta.get_field('email').__dict__['_unique'] = True
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
