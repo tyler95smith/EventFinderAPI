@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import datetime
 import os
 
+#email uniqueness
+from django.contrib.auth.models import User, models
+User._meta.get_field('email').__dict__['_unique'] = True
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
