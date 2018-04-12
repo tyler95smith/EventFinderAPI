@@ -23,7 +23,7 @@ def ManageIndex(request):
     return render(request, 'API/manage_home.html')
 
 def ManageEvents(request):
-	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all())))
+	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0)
 	context={'event_list': event_list}
 	return render(request, 'API/manage_events.html', context)
 
