@@ -20,7 +20,10 @@ from django.db.models import Count, Q
 import os
 # Create your views here.
 def ManageIndex(request):
-    return render(request, 'API/manage_home.html')
+	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0).order_by('-report_count')
+	person_list = Person.objects.all()
+	context = {'event_list': event_list, 'person_list': person_list}
+	return render(request, 'API/manage_home.html', context)
 
 def ManageEvents(request):
 	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0)
@@ -28,7 +31,9 @@ def ManageEvents(request):
 	return render(request, 'API/manage_events.html', context)
 
 def ManageUsers(request):
-	return render(request, 'API/manage_users.html')
+	user_list = User.objects.annotate(report_count=Count('reported_account', filter=Q(id__in=Report.objects.all()))).filter(person__isBanned=False, report_count__gt=0)
+	context = {'user_list': user_list}
+	return render(request, 'API/manage_users.html', context)
 
 def EventDetail(request, event_id):
 	event = get_object_or_404(Event, pk=event_id)

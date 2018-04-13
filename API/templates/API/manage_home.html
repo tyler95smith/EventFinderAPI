@@ -23,21 +23,49 @@
 </nav>
   
 <div class="container">
-  	<div class="row">
-	    <div class="col-sm-4">
-		    <h3>Column 1</h3>
-		    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-		    <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-	    </div>
-	    <div class="col-sm-4">
-	        <h3>Column 2</h3>
-	        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-	        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-	    </div>
-	    <div class="col-sm-4">
-	        <h3>Column 3</h3>        
-	        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-	        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-	    </div>
-  	</div> <!-- end "row" -->
+  <div class="row">
+    <h3>Highest Reported Events</h3>
+    <div class="table-responsive">
+        <table class="table">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Event Date</th>
+            <th>Host</th>
+            <th>Report Count</th>
+            <th>Manage</th>
+          </tr>
+          {% for event in event_list %}
+          <tr>
+            <td>{{ event.id }}</td>
+            <td>{{ event.event_name }}</td>
+            <td>{{ event.event_date }}</td>
+            <td>{{ event.host }}</td>
+            <td>{{ event.report_count }}</td>
+            <td><button type="button" class="btn btn-primary">Manage</button></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div> <!-- end "table-responsive"-->
+  </div> <!-- end "row" -->
+
+  <div class="row">
+    <h3>Highest Reported Users</h3>
+    <div class="table-responsive">
+        <table class="table">
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Manage</th>
+          </tr>
+          {% for person in person_list %}
+          <tr>
+            <td>{{ person.id }}</td>
+            <td>{{ person.user.username }}</td>
+            <td><button type="button" class="btn btn-primary">Manage</button></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div> <!-- end "table-responsive"-->
+  </div> <!-- end "row" -->
 </div> <!-- end "container" -->

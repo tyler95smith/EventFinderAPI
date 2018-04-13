@@ -30,33 +30,20 @@
 	  			<tr>
 	  				<th>ID</th>
 	  				<th>Name</th>
-	  				<th>Email</th>
+	  				<th>Username</th>
 	  				<th>Report Count</th>
 	  				<th>Manage</th>
 	  			</tr>
+	  			{% for user in user_list %}
 	  			<tr>
-	  				<td>223</td>
-	  				<td>Timmy</td>
-	  				<td>wowee@cow.org</td>
-	  				<td>200</td>
+	  				<td>{{ user.id }}</td>
+	  				<td>{{ user.f_name }} {{ user.l_name }}</td>
+	  				<td>{{ user.username }}</td>
+	  				<td>{{ user.report_count }}</td>
 	  				<td><button type="button" class="btn btn-primary">Manage</button></td>
 	  			</tr>
-	  			<tr>
-	  				<td>332</td>
-	  				<td>Todd</td>
-	  				<td>Toddman@this.com</td>
-	  				<td>12</td>
-	  				<td><button type="button" class="btn btn-primary">Manage</button></td>
-	  			</tr>
-	  			<tr>
-	  				<td>160</td>
-	  				<td>jessica</td>
-	  				<td>jess@mailc.om</td>
-	  				<td>42</td>
-	  				<td><button type="button" class="btn btn-primary">Manage</button></td>
-	  			</tr>
+	  			{% endfor %}
 	  		</table>
   		</div> <!-- end "table-responsive"-->
-
-	</div>
+	</div> <!-- end "row" -->
 </div> <!-- end "container" -->
