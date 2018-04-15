@@ -40,10 +40,10 @@ def EventDetail(request, event_id):
 	context={'event': event}
 	return render(request, 'API/manage_event_detail.html', context)
 
-def UserDetail(request, person_id):
-	person = get_object_or_404(Person, pk=person_id)
-	context={'person': person}
-	return render(request, 'API/manage_user_detail.html')
+def UserDetail(request, user_id):
+	user = get_object_or_404(User, pk=user_id)
+	context={'user': user}
+	return render(request, 'API/manage_user_detail.html', context)
 
 class TempResult(APIView):
 	def get(self, request, format='json'):

@@ -21,3 +21,34 @@
     </ul>
   </div>
 </nav>
+
+<div class="container">
+  {% if user %}
+    <label for="pwd">User ID:</label>
+    <input type="text" class="form-control" id="user_id" placeholder="User ID" value="{{ user.id }}" name="user_id" disabled="disabled">
+
+    <label for="pwd">Username:</label>
+    <input type="text" class="form-control" id="username" placeholder="Event ID" value="{{ user.username }}" name="username" disabled="disabled">
+
+    <div class="checkbox">
+      <label><input type="checkbox" id="hidden" name="hidden" value="" {% if user.person.isBanned %} checked {% endif %} disabled="disabled">Is Banned:</label>
+    </div>
+
+        <div class="row">
+        <div class="col-lg-12">
+          <h3>Reports</h3>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Reportee</th>
+                <th>Report Text</th>
+                <th>Date Submitted</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+    </div>
+    {% else %}
+      <p>No event exists with that id!</p>
+    {% endif %}
+</div>

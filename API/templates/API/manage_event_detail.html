@@ -28,7 +28,7 @@
     <input type="text" class="form-control" id="event_id" placeholder="Event ID" value="{{ event.id }}" name="event_id" disabled="disabled">
 
 		<label for="pwd">Event Name:</label>
-    <input type="text" class="form-control" id="event_name" placeholder="Event ID" value="{{ event.event_name }}" name="event_name" disabled="disabled">
+    <input type="text" class="form-control" id="event_name" placeholder="Event Name" value="{{ event.event_name }}" name="event_name" disabled="disabled">
 
     <div class="checkbox">
       <label><input type="checkbox" id="hidden" name="hidden" value="" {% if event.is_hidden %} checked {% endif %} disabled="disabled">Is Hidden:</label>

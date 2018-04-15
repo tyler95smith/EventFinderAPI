@@ -14,7 +14,7 @@
     <ul class="nav navbar-nav">
       <li><a href="/manage/">Home</a></li>
       <li><a href="/manage/events">Events</a></li>
-      <li class="active"><a href="#">Users</a></li>
+      <li class="active"><a>Users</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
     	<li><a href="#"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
@@ -40,10 +40,16 @@
 	  				<td>{{ user.f_name }} {{ user.l_name }}</td>
 	  				<td>{{ user.username }}</td>
 	  				<td>{{ user.report_count }}</td>
-	  				<td><button type="button" class="btn btn-primary">Manage</button></td>
+	  				<td><button type="button" class="btn btn-primary" onclick="manage({{ user.id }})">Manage</button></td>
 	  			</tr>
 	  			{% endfor %}
 	  		</table>
   		</div> <!-- end "table-responsive"-->
 	</div> <!-- end "row" -->
 </div> <!-- end "container" -->
+
+<script>
+	function manage(id) {
+		window.location=window.location.href + id + "/"
+	}
+</script>
