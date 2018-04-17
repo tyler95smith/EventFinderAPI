@@ -4,6 +4,7 @@
     <title>Home Page</title>
     <link rel="stylesheet" href="{% static 'API/bootstrap/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'API/style.css' %}">
+    <script src="{% static 'API/js/custom.js' %}"></script>
 </head>
 
 <nav class="navbar navbar-inverse">
@@ -41,8 +42,7 @@
             <td>{{ event.event_name }}</td>
             <td>{{ event.event_date }}</td>
             <td>{{ event.host }}</td>
-            <td>{{ event.report_count }}</td>
-            <td><button type="button" class="btn btn-primary">Manage</button></td>
+            <td>{{ event.report_count }}</td><td><button type="button" class="btn btn-primary" onclick="manageEvent({{ event.id }})">Manage</button></td>
           </tr>
           {% endfor %}
         </table>
@@ -58,11 +58,11 @@
             <th>Username</th>
             <th>Manage</th>
           </tr>
-          {% for person in person_list %}
+          {% for user in user_list %}
           <tr>
-            <td>{{ person.id }}</td>
-            <td>{{ person.user.username }}</td>
-            <td><button type="button" class="btn btn-primary">Manage</button></td>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td><button type="button" class="btn btn-primary" onclick="manageUser({{ user.id }})">Manage</button></td>
           </tr>
           {% endfor %}
         </table>

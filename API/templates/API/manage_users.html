@@ -4,6 +4,7 @@
     <title>Home Page</title>
     <link rel="stylesheet" href="{% static 'API/bootstrap/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'API/style.css' %}">
+    <script src="{% static 'API/js/custom.js' %}"></script>
 </head>
 
 <nav class="navbar navbar-inverse">
@@ -40,16 +41,10 @@
 	  				<td>{{ user.f_name }} {{ user.l_name }}</td>
 	  				<td>{{ user.username }}</td>
 	  				<td>{{ user.report_count }}</td>
-	  				<td><button type="button" class="btn btn-primary" onclick="manage({{ user.id }})">Manage</button></td>
+	  				<td><button type="button" class="btn btn-primary" onclick="manageUser({{ user.id }})">Manage</button></td>
 	  			</tr>
 	  			{% endfor %}
 	  		</table>
   		</div> <!-- end "table-responsive"-->
 	</div> <!-- end "row" -->
 </div> <!-- end "container" -->
-
-<script>
-	function manage(id) {
-		window.location=window.location.href + id + "/"
-	}
-</script>

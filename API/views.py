@@ -20,13 +20,13 @@ from django.db.models import Count, Q
 import os
 # Create your views here.
 def ManageIndex(request):
-	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0).order_by('-report_count')
-	person_list = Person.objects.all()
-	context = {'event_list': event_list, 'person_list': person_list}
+	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0).order_by('-report_count')[:5]
+	user_list = User.objects.all()[:5]
+	context = {'event_list': event_list, 'user_list': user_list}
 	return render(request, 'API/manage_home.html', context)
 
 def ManageEvents(request):
-	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0)
+	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0)[:10]
 	context={'event_list': event_list}
 	return render(request, 'API/manage_events.html', context)
 
