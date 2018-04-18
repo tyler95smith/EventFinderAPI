@@ -23,7 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = User
-		fields = ('id','username','email', 'password')
+		fields = ('id','username','email', 'password', 'last_name', 'first_name')
 
 #--------------------------------------------------------------------
 #    Serializer for updating a User's password endpoint. 
@@ -75,7 +75,7 @@ class PersonSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Person
-		fields = ('id', 'user', 'date_of_birth', 'bio', 'primaryLocation', 'currentLocation', 'hideLocation')
+		fields = ('id', 'user', 'date_of_birth', 'bio', 'primaryLocation', 'currentLocation', 'hideLocation', 'isBanned')
 
 class EventSerializer(serializers.ModelSerializer):
 	attendees = serializers.PrimaryKeyRelatedField(many=True,queryset=User.objects.all())
