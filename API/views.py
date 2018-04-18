@@ -140,11 +140,11 @@ class UpdatePassword(APIView):
         return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GetMyInfo(APIView):
-    def get(self, request, format='json'):
-	u = User.objects.get(username=request.GET.get('username'))
-	p = Person.objects.filter(user=u)
-	serializer = PersonSerializer(p)
-	return Response(serializer.data, status=status.HTTP_200_OK)
+	def get(self, request, format='json'):
+		u = User.objects.get(username=request.GET.get('username'))
+		p = Person.objects.filter(user=u)
+		serializer = PersonSerializer(p)
+		return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 '''
