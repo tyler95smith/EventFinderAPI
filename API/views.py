@@ -107,22 +107,6 @@ class ActivateUser(APIView):
 		JSON fields expected:
 
 '''
-class ValidateEmail(APIView):
-	def get(self, request, format='json'):
-		try:
-			u = User.objects.get(email=request.GET.get('email'))
-			return Response("Email Already Exists", status=status.HTTP_400_BAD_REQUEST)
-		except User.DoesNotExist:
-			return Response("Email is Unique", status=status.HTTP_200_OK)
-		
-class ValidateUsername(APIView):
-	def get(self, request, format='json'):
-		try:
-			u = User.objects.get(username=request.GET.get('username'))
-			return Response("Email Already Exists", status=status.HTTP_400_BAD_REQUEST)
-		except User.DoesNotExist:
-			return Response("Email is Unique", status=status.HTTP_200_OK)
-
 
 class GetPerson(APIView):
     def get(self, request, id, format='none'):
@@ -154,6 +138,14 @@ class UpdatePassword(APIView):
             except User.DoesNotExist:
                 return Response("User id does not exist.", status=status.HTTP_400_BAD_REQUEST)
         return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetMyInfo(APIView):
+    def get(self, request, format='json'):
+	u = User.objects.get(username=request.GET.get('username'))
+	p = Person.objects.filter(user=u)
+	serializer = PersonSerializer(p)
+	return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 '''
  api end point to get past events of a specific user
