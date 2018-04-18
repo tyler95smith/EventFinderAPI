@@ -17,6 +17,7 @@ urlpatterns = [
     path('api/validateemail/', views.ValidateEmail.as_view(), name='validate-emal'),
     path('api/validateusername/', views.ValidateUsername.as_view(), name='valitate-username'),
     path('api/createuser/', views.CreateUser.as_view(), name='create-user'),
+	path('api/getmyinfo/' views.GetMyInfo.as_view(), name='get-my-info'),
     path('api/activateuser/', views.ActivateUser.as_view(), name='activate-user'),
     path('api/getpastevents/', views.GetPastEvents.as_view(), name='get-past-events'),
     path('api/getfutureevents/', views.GetFutureEvents.as_view(), name='get-future-events'),
