@@ -20,25 +20,30 @@ from django.db.models import Count, Q
 import os
 # Create your views here.
 def ManageIndex(request):
-    return render(request, 'API/manage_home.html')
+	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0).order_by('-report_count')[:5]
+	user_list = User.objects.all()[:5]
+	context = {'event_list': event_list, 'user_list': user_list}
+	return render(request, 'API/manage_home.html', context)
 
 def ManageEvents(request):
-	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all())))
+	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0)[:10]
 	context={'event_list': event_list}
 	return render(request, 'API/manage_events.html', context)
 
 def ManageUsers(request):
-	return render(request, 'API/manage_users.html')
+	user_list = User.objects.annotate(report_count=Count('reported_account', filter=Q(id__in=Report.objects.all()))).filter(person__isBanned=False, report_count__gt=0)
+	context = {'user_list': user_list}
+	return render(request, 'API/manage_users.html', context)
 
 def EventDetail(request, event_id):
 	event = get_object_or_404(Event, pk=event_id)
 	context={'event': event}
 	return render(request, 'API/manage_event_detail.html', context)
 
-def UserDetail(request, person_id):
-	person = get_object_or_404(Person, pk=person_id)
-	context={'person': person}
-	return render(request, 'API/manage_user_detail.html')
+def UserDetail(request, user_id):
+	user = get_object_or_404(User, pk=user_id)
+	context={'user': user}
+	return render(request, 'API/manage_user_detail.html', context)
 
 class TempResult(APIView):
 	def get(self, request, format='json'):
@@ -102,22 +107,6 @@ class ActivateUser(APIView):
 		JSON fields expected:
 
 '''
-class ValidateEmail(APIView):
-	def get(self, request, format='json'):
-		try:
-			u = User.objects.get(email=request.GET.get('email'))
-			return Response("Email Already Exists", status=status.HTTP_400_BAD_REQUEST)
-		except User.DoesNotExist:
-			return Response("Email is Unique", status=status.HTTP_200_OK)
-		
-class ValidateUsername(APIView):
-	def get(self, request, format='json'):
-		try:
-			u = User.objects.get(username=request.GET.get('username'))
-			return Response("Email Already Exists", status=status.HTTP_400_BAD_REQUEST)
-		except User.DoesNotExist:
-			return Response("Email is Unique", status=status.HTTP_200_OK)
-
 
 class GetPerson(APIView):
     def get(self, request, id, format='none'):
@@ -149,6 +138,14 @@ class UpdatePassword(APIView):
             except User.DoesNotExist:
                 return Response("User id does not exist.", status=status.HTTP_400_BAD_REQUEST)
         return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GetMyInfo(APIView):
+    def get(self, request, format='json'):
+	u = User.objects.get(username=request.GET.get('username'))
+	p = Person.objects.filter(user=u)
+	serializer = PersonSerializer(p)
+	return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 '''
  api end point to get past events of a specific user

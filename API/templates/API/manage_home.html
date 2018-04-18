@@ -4,6 +4,7 @@
     <title>Home Page</title>
     <link rel="stylesheet" href="{% static 'API/bootstrap/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'API/style.css' %}">
+    <script src="{% static 'API/js/custom.js' %}"></script>
 </head>
 
 <nav class="navbar navbar-inverse">
@@ -12,7 +13,7 @@
       <a class="navbar-brand" href="#">Event Finder</a>
     </div>
     <ul class="nav navbar-nav">
-      <li class="active"><a href="#">Home</a></li>
+      <li class="active"><a>Home</a></li>
       <li><a href="/manage/events/">Events</a></li>
       <li><a href="/manage/users/">Users</a></li>
     </ul>
@@ -23,21 +24,48 @@
 </nav>
   
 <div class="container">
-  	<div class="row">
-	    <div class="col-sm-4">
-		    <h3>Column 1</h3>
-		    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-		    <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-	    </div>
-	    <div class="col-sm-4">
-	        <h3>Column 2</h3>
-	        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-	        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-	    </div>
-	    <div class="col-sm-4">
-	        <h3>Column 3</h3>        
-	        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-	        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
-	    </div>
-  	</div> <!-- end "row" -->
+  <div class="row">
+    <h3>Highest Reported Events</h3>
+    <div class="table-responsive">
+        <table class="table">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Event Date</th>
+            <th>Host</th>
+            <th>Report Count</th>
+            <th>Manage</th>
+          </tr>
+          {% for event in event_list %}
+          <tr>
+            <td>{{ event.id }}</td>
+            <td>{{ event.event_name }}</td>
+            <td>{{ event.event_date }}</td>
+            <td>{{ event.host }}</td>
+            <td>{{ event.report_count }}</td><td><button type="button" class="btn btn-primary" onclick="manageEvent({{ event.id }})">Manage</button></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div> <!-- end "table-responsive"-->
+  </div> <!-- end "row" -->
+
+  <div class="row">
+    <h3>Highest Reported Users</h3>
+    <div class="table-responsive">
+        <table class="table">
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Manage</th>
+          </tr>
+          {% for user in user_list %}
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td><button type="button" class="btn btn-primary" onclick="manageUser({{ user.id }})">Manage</button></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div> <!-- end "table-responsive"-->
+  </div> <!-- end "row" -->
 </div> <!-- end "container" -->

@@ -4,6 +4,7 @@
     <title>Home Page</title>
     <link rel="stylesheet" href="{% static 'API/bootstrap/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'API/style.css' %}">
+    <script src="{% static 'API/js/custom.js' %}"></script>
 </head>
 
 <nav class="navbar navbar-inverse">
@@ -14,7 +15,7 @@
     <ul class="nav navbar-nav">
       <li><a href="/manage/">Home</a></li>
       <li><a href="/manage/events">Events</a></li>
-      <li class="active"><a href="#">Users</a></li>
+      <li class="active"><a>Users</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
     	<li><a href="#"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
@@ -30,33 +31,20 @@
 	  			<tr>
 	  				<th>ID</th>
 	  				<th>Name</th>
-	  				<th>Email</th>
+	  				<th>Username</th>
 	  				<th>Report Count</th>
 	  				<th>Manage</th>
 	  			</tr>
+	  			{% for user in user_list %}
 	  			<tr>
-	  				<td>223</td>
-	  				<td>Timmy</td>
-	  				<td>wowee@cow.org</td>
-	  				<td>200</td>
-	  				<td><button type="button" class="btn btn-primary">Manage</button></td>
+	  				<td>{{ user.id }}</td>
+	  				<td>{{ user.f_name }} {{ user.l_name }}</td>
+	  				<td>{{ user.username }}</td>
+	  				<td>{{ user.report_count }}</td>
+	  				<td><button type="button" class="btn btn-primary" onclick="manageUser({{ user.id }})">Manage</button></td>
 	  			</tr>
-	  			<tr>
-	  				<td>332</td>
-	  				<td>Todd</td>
-	  				<td>Toddman@this.com</td>
-	  				<td>12</td>
-	  				<td><button type="button" class="btn btn-primary">Manage</button></td>
-	  			</tr>
-	  			<tr>
-	  				<td>160</td>
-	  				<td>jessica</td>
-	  				<td>jess@mailc.om</td>
-	  				<td>42</td>
-	  				<td><button type="button" class="btn btn-primary">Manage</button></td>
-	  			</tr>
+	  			{% endfor %}
 	  		</table>
   		</div> <!-- end "table-responsive"-->
-
-	</div>
+	</div> <!-- end "row" -->
 </div> <!-- end "container" -->
