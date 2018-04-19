@@ -18,7 +18,6 @@ import datetime # dont remove needed to import this way for the datetime.date.to
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Count, Q
 import os
-import json
 # Create your views here.
 def ManageIndex(request):
 	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0).order_by('-report_count')[:5]
@@ -52,9 +51,11 @@ class TempResult(APIView):
 		return Response(BASE_DIR)
 #
 # To test api
+@permission_classes([])
 class TestAPIView(APIView):
 	def get(self, request, format='json'):
-		return Response("It's working! Hello from the API.")
+		username = 'stranger' if not request.user.username else request.user.username
+		return Response("Hi %s! Welcome to the API!!" % username)
 
 #
 # api end point to list all users...
@@ -87,21 +88,21 @@ class CreateUser(APIView):
 '''
 @permission_classes([])
 class ActivateUser(APIView):
-    def get(self, request, format='none'):
-        u = User.objects.get(id=request.GET.get('id'))
-        if u.person.isBanned:
-            return Response("Error: This user has been banned.")
-        if u.is_active:
-            return Response("Error: This user is already confirmed.")
-        else:
-            g = PasswordResetTokenGenerator()
-            if g.check_token(u, request.GET.get('token')):
-                u.is_active = True
-                u.last_login = datetime.datetime.now() # We need to change something to invalidate the token.
-                u.save()
-                return Response("Success.  The account for %s is now active!" % (u.username))
-            else:
-                return Response("Error: This token appears to be old or invalid.")
+	def get(self, request, format='none'):
+		u = User.objects.get(id=request.GET.get('id'))
+		if u.person.isBanned:
+			return Response("Error: This user has been banned.")
+		if u.is_active:
+			return Response("Error: This user is already confirmed.")
+		else:
+			g = PasswordResetTokenGenerator()
+			if g.check_token(u, request.GET.get('token')):
+				u.is_active = True
+				u.last_login = datetime.datetime.now() # We need to change something to invalidate the token.
+				u.save()
+				return Response("Success.  The account for %s is now active!" % (u.username))
+			else:
+				return Response("Error: This token appears to be old or invalid.")
 
 '''
 	End point for getting Person Account info from Person 'id'
@@ -110,39 +111,38 @@ class ActivateUser(APIView):
 '''
 
 class GetPerson(APIView):
-    def get(self, request, id, format='none'):
-        try:
-            p = Person.objects.get(pk=id)
-            serializer = PersonSerializer(p)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Person.DoesNotExist:
-            return Response("Person id does not exist.", status=status.HTTP_400_BAD_REQUEST)
+	def get(self, request, id, format='none'):
+		try:
+			p = Person.objects.get(pk=id)
+			serializer = PersonSerializer(p)
+			return Response(serializer.data, status=status.HTTP_200_OK)
+		except Person.DoesNotExist:
+			return Response("Person id does not exist.", status=status.HTTP_400_BAD_REQUEST)
 
 '''
 	Update User Password Endpoint
 		JSON fields expected:
-		    "id" (user object id)
-		    "old_password"
-		    "new_password"
+			"id" (user object id)
+			"old_password"
+			"new_password"
 '''
 class UpdatePassword(APIView):
-    def put(self, request, format='json'):
-        serialized = UpdatePasswordSerializer(data=request.data)
-        if serialized.is_valid():
-            try:
-                user = User.objects.get(id=serialized.data.get("id"))
-                if not user.check_password(serialized.data.get("old_password")):
-                    return Response({"old_password": "Wrong password."}, status=status.HTTP_400_BAD_REQUEST)
-                user.set_password(serialized.data.get("new_password"))
-                user.save()
-                return Response("Success.", status=status.HTTP_200_OK)
-            except User.DoesNotExist:
-                return Response("User id does not exist.", status=status.HTTP_400_BAD_REQUEST)
-        return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+	def put(self, request, format='json'):
+		serialized = UpdatePasswordSerializer(data=request.data)
+		if serialized.is_valid():
+			try:
+				user = User.objects.get(id=serialized.data.get("id"))
+				if not user.check_password(serialized.data.get("old_password")):
+					return Response({"old_password": "Wrong password."}, status=status.HTTP_400_BAD_REQUEST)
+				user.set_password(serialized.data.get("new_password"))
+				user.save()
+				return Response("Success.", status=status.HTTP_200_OK)
+			except User.DoesNotExist:
+				return Response("User id does not exist.", status=status.HTTP_400_BAD_REQUEST)
+		return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@permission_classes([])
 class GetMyInfo(APIView):
-	def post(self, request, format='json'):
+	def get(self, request, format='json'):
 		data = json.loads(request.body.decode("utf-8"))
 		u = User.objects.get(username=data['username'])
 		p = Person.objects.get(user=u)
@@ -208,7 +208,7 @@ class GetRecentEvents(APIView):
 
 		
 #
-# api end point to list all accounts of type 'person'... 	
+# api end point to list all accounts of type 'person'...	
 class ListPersons(APIView):	
 	def get(self, request, format='json'):
 		persons = Person.objects.all()
@@ -227,17 +227,17 @@ class ListPersons(APIView):
 		
 		The following format is expected:
 		{
-        "user": {
-            "username": "someusername",
-            "email": "example@exmpl.com",
-            "password": "notagoodpassword"
-        },
-        "date_of_birth": "1998-09-04",
-        "bio": "Yeah. this is a good bio..",
-        "primaryLocation": "San Diego, CA",
-        "currentLocation": "Los Angeles, CA",
-        "hideLocation": false
-    	}			
+		"user": {
+			"username": "someusername",
+			"email": "example@exmpl.com",
+			"password": "notagoodpassword"
+		},
+		"date_of_birth": "1998-09-04",
+		"bio": "Yeah. this is a good bio..",
+		"primaryLocation": "San Diego, CA",
+		"currentLocation": "Los Angeles, CA",
+		"hideLocation": false
+		}			
 '''
 @permission_classes([])
 class CreatePersonAccount(APIView):
@@ -262,17 +262,17 @@ class CreatePersonAccount(APIView):
 		The following format is expected:
 		{
 		 "id": "3",
-        "user": {
-        	"name": "John",
-            "username": "someusername",
-            "email": "example@exmpl.com"
-        },
-        "date_of_birth": "1998-09-04",
-        "bio": "Yeah. this is a good bio..",
-        "primaryLocation": "San Diego, CA",
-        "currentLocation": "Los Angeles, CA",
-        "hideLocation": false
-    	}
+		"user": {
+			"name": "John",
+			"username": "someusername",
+			"email": "example@exmpl.com"
+		},
+		"date_of_birth": "1998-09-04",
+		"bio": "Yeah. this is a good bio..",
+		"primaryLocation": "San Diego, CA",
+		"currentLocation": "Los Angeles, CA",
+		"hideLocation": false
+		}
 
 
 '''		
