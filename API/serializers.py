@@ -44,7 +44,7 @@ class UpdatePasswordSerializer(serializers.Serializer):
 #
 #---------------------------------------------------------------------
 class PersonSerializer(serializers.ModelSerializer):
-	user = UserSerializer()
+	user = UserSerializer(many=True)
 	
 	def create(self, valid_data):
 		user_data = valid_data.pop('user')
