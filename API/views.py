@@ -18,6 +18,7 @@ import datetime # dont remove needed to import this way for the datetime.date.to
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Count, Q
 import os
+import json
 # Create your views here.
 def ManageIndex(request):
 	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0).order_by('-report_count')[:5]
@@ -139,10 +140,12 @@ class UpdatePassword(APIView):
                 return Response("User id does not exist.", status=status.HTTP_400_BAD_REQUEST)
         return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@permission_classes([])
 class GetMyInfo(APIView):
-	def get(self, request, format='json'):
-		u = User.objects.get(username=request.GET.get('username'))
-		p = Person.objects.filter(user=u)
+	def post(self, request, format='json'):
+		data = json.loads(request.body.decode("utf-8"))
+		u = User.objects.get(username=data['username'])
+		p = Person.objects.get(user=u)
 		serializer = PersonSerializer(p)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 
