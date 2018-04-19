@@ -37,12 +37,14 @@ def ManageUsers(request):
 
 def EventDetail(request, event_id):
 	event = get_object_or_404(Event, pk=event_id)
-	context={'event': event}
+	report_list = Report.objects.filter(rep_event=event_id)
+	context={'event': event, 'report_list': report_list}
 	return render(request, 'API/manage_event_detail.html', context)
 
 def UserDetail(request, user_id):
 	user = get_object_or_404(User, pk=user_id)
-	context={'user': user}
+	report_list = Report.objects.filter(rep_account=user_id)
+	context={'user': user, 'report_list': report_list}
 	return render(request, 'API/manage_user_detail.html', context)
 
 class TempResult(APIView):

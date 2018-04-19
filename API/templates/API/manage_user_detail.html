@@ -46,6 +46,17 @@
                 <th>Date Submitted</th>
               </tr>
             </thead>
+            {% if report_list %}
+              {% for report in report_list %}
+              <tr>
+                <td>{{ report.snitch.username }}</td>
+                <td>{{ report.rep_message }}</td>
+                <td>{{ report.date_created }}</td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr><td>This user has not been reported!</td></tr>
+            {% endif %}
           </table>
         </div>
     </div>
