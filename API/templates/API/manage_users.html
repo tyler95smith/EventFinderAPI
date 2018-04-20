@@ -33,6 +33,7 @@
 	  				<th>Name</th>
 	  				<th>Username</th>
 	  				<th>Report Count</th>
+	  				<th>Is Banned</th>
 	  				<th>Manage</th>
 	  			</tr>
 	  			{% for user in user_list %}
@@ -41,6 +42,7 @@
 	  				<td>{{ user.f_name }} {{ user.l_name }}</td>
 	  				<td>{{ user.username }}</td>
 	  				<td>{{ user.report_count }}</td>
+	  				<td>{{ user.person.isBanned }}</td>
 	  				<td><button type="button" class="btn btn-primary" onclick="manageUser({{ user.id }})">Manage</button></td>
 	  			</tr>
 	  			{% endfor %}
