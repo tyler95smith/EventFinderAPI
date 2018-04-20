@@ -144,12 +144,17 @@ class UpdatePassword(APIView):
 		return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GetMyInfo(APIView):
+	'''
+	'''
 	def get(self, request, format='json'):
-		data = json.loads(request.body.decode("utf-8"))
-		u = User.objects.get(username=data['username'])
-		p = Person.objects.get(user=u)
-		serializer = PersonSerializer(p)
-		return Response(serializer.data, status=status.HTTP_200_OK)
+		if request.user:
+			try:
+				p = Person.objects.get(user=request.user)
+				serializer = PersonSerializer(p)
+				return Response(serializer.data, status=status.HTTP_200_OK)
+			except Person.DoesNotExist:
+				return Response("Person does not exist for this account.", status=status.HTTP_400_BAD_REQUEST)
+		return Response("Token is not set or is not valid.", status=status.HTTP_400_BAD_REQUEST)
 
 
 '''
