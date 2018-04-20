@@ -26,6 +26,7 @@
 <div class="container">
   <h1>Event Info</h1>
 	{% if event %}
+    <!-- Event Info -->
 		<label for="pwd">EventID:</label>
     <input type="text" class="form-control" id="event_id" placeholder="Event ID" value="{{ event.id }}" name="event_id" disabled="disabled">
 
@@ -35,29 +36,35 @@
     <div class="checkbox">
       <label><input type="checkbox" id="hidden" name="hidden" value="" {% if event.is_hidden %} checked {% endif %} disabled="disabled">Is Hidden:</label>
     </div>
+    <!-- End Event Info -->
 
-        <div class="row">
-		    <div class="col-lg-12">
-			    <h2>Reports</h2>
-			    <table class="table table-striped">
-			    	<thead>
-			    		<tr>
-			    			<th>Reportee</th>
-			    			<th>Report Text</th>
-			    			<th>Date Submitted</th>
-			    		</tr>
-			    	</thead>
-            {% for report in report_list %}
-            <tr>
-              <td>{{ report.snitch.username }}</td>
-              <td>{{ report.rep_message }}</td>
-              <td>{{ report.date_created }}</td>
-            </tr>
-            {% endfor%}
-			    </table>
-		    </div>
-		</div>
-    {% else %}
+    <div class="row pull-right">
+      <button type="button" class="btn btn-primary">Message Host</button>
+      <button type="button" class="btn btn-danger">Hide Event</button>
+    </div>
+
+    <div class="row">
+	    <div class="col-lg-12">
+		    <h2>Reports</h2>
+		    <table class="table table-striped">
+		    	<thead>
+		    		<tr>
+		    			<th>Reportee</th>
+		    			<th>Report Text</th>
+		    			<th>Date Submitted</th>
+		    		</tr>
+		    	</thead>
+          {% for report in report_list %}
+          <tr>
+            <td>{{ report.snitch.username }}</td>
+            <td>{{ report.rep_message }}</td>
+            <td>{{ report.date_created }}</td>
+          </tr>
+          {% endfor%}
+		    </table>
+	    </div> <!-- end col-lg-12 -->
+		</div> <!-- end row -->
+  {% else %}
     	<p>No event exists with that id!</p>
-    {% endif %}
-</div>
+  {% endif %}
+</div> <!-- end container -->

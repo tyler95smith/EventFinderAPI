@@ -35,32 +35,37 @@
       <label><input type="checkbox" id="hidden" name="hidden" value="" {% if user.person.isBanned %} checked {% endif %} disabled="disabled">Is Banned:</label>
     </div>
 
-        <div class="row">
-        <div class="col-lg-12">
-          <h3>Reports</h3>
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Reportee</th>
-                <th>Report Text</th>
-                <th>Date Submitted</th>
-              </tr>
-            </thead>
-            {% if report_list %}
-              {% for report in report_list %}
-              <tr>
-                <td>{{ report.snitch.username }}</td>
-                <td>{{ report.rep_message }}</td>
-                <td>{{ report.date_created }}</td>
-              </tr>
-              {% endfor %}
-            {% else %}
-              <tr><td>This user has not been reported!</td></tr>
-            {% endif %}
-          </table>
-        </div>
+    <div class="row pull-right">
+      <button type="button" class="btn btn-primary">Message User</button>
+      <button type="button" class="btn btn-danger">Ban User</button>
     </div>
-    {% else %}
-      <p>No event exists with that id!</p>
-    {% endif %}
+
+    <div class="row">
+      <div class="col-lg-12">
+        <h3>Reports</h3>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Reportee</th>
+              <th>Report Text</th>
+              <th>Date Submitted</th>
+            </tr>
+          </thead>
+          {% if report_list %}
+            {% for report in report_list %}
+            <tr>
+              <td>{{ report.snitch.username }}</td>
+              <td>{{ report.rep_message }}</td>
+              <td>{{ report.date_created }}</td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr><td>This user has not been reported!</td></tr>
+          {% endif %}
+        </table>
+      </div>
+    </div>
+  {% else %}
+    <p>No event exists with that id!</p>
+  {% endif %}
 </div>
