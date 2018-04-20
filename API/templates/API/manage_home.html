@@ -22,10 +22,19 @@
     </ul>
   </div>
 </nav>
+
+<div class="container">
+  <span>TODO:</span>
+  <ul>
+    <li>check with report functionality to determine if user or person id is reported</li>
+    <li></li>
+    <li></li>
+  </ul>
+</div>
   
 <div class="container">
   <div class="row">
-    <h3>Highest Reported Events</h3>
+    <h2>Highest Reported Events</h2>
     <div class="table-responsive">
         <table class="table">
           <tr>
@@ -50,18 +59,20 @@
   </div> <!-- end "row" -->
 
   <div class="row">
-    <h3>Highest Reported Users</h3>
+    <h2>Highest Reported Users</h2>
     <div class="table-responsive">
         <table class="table">
           <tr>
             <th>ID</th>
             <th>Username</th>
+            <th>Report Count</th>
             <th>Manage</th>
           </tr>
           {% for user in user_list %}
           <tr>
             <td>{{ user.id }}</td>
             <td>{{ user.username }}</td>
+            <td>{{ user.report_count }}</td>
             <td><button type="button" class="btn btn-primary" onclick="manageUser({{ user.id }})">Manage</button></td>
           </tr>
           {% endfor %}
