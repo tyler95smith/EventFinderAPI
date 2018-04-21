@@ -17,6 +17,7 @@ import datetime # dont remove needed to import this way for the datetime.date.to
 
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Count, Q
+from django.http import HttpResponseRedirect
 import os
 # Create your views here.
 def ManageIndex(request):
@@ -46,6 +47,18 @@ def UserDetail(request, user_id):
 	report_list = Report.objects.filter(rep_account=user_id)
 	context={'user': user, 'report_list': report_list}
 	return render(request, 'API/manage_user_detail.html', context)
+
+def EventUpdate(request, event_id):
+	event = get_object_or_404(Event, pk=event_id)
+	event.is_hidden = not event.is_hidden
+	event.save()
+	return HttpResponseRedirect('/manage/events/' + str(event_id))
+
+def UserUpdate(request, user_id):
+	user = get_object_or_404(User, pk=user_id)
+	user.person.isBanned = not user.person.isBanned
+	user.person.save()
+	return HttpResponseRedirect('/manage/users/' + str(user_id))
 
 class TempResult(APIView):
 	def get(self, request, format='json'):

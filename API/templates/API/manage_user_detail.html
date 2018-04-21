@@ -30,11 +30,14 @@
     <label for="user_id">User ID:</label>
     <input type="text" class="form-control" id="user_id" placeholder="" value="{{ user.id }}" name="user_id" disabled="disabled">
 
+    <label for="person_id">Person ID:</label>
+    <input type="text" class="form-control" id="person_id" placeholder="" value="{{ user.person.id }}" name="person_id" disabled="disabled">
+
     <label for="username">Username:</label>
     <input type="text" class="form-control" id="username" placeholder="" value="{{ user.username }}" name="username" disabled="disabled">
 
     <label for="name">Name:</label>
-    <input type="text" class="form-control" id="name" placeholder="" value="{{ user.f_name }} {{ user.l_name }}" name="name" disabled="disabled">
+    <input type="text" class="form-control" id="name" placeholder="" value="{{ user.first_name }} {{ user.last_name }}" name="name" disabled="disabled">
 
     <label for="email">Email:</label>
     <input type="text" class="form-control" id="email" placeholder="" value="{{ user.email }}" name="email" disabled="disabled">
@@ -54,8 +57,8 @@
     <!-- End Event Info -->
 
     <div class="row pull-right">
-      <button type="button" class="btn btn-primary">Message User</button>
-      <button type="button" class="btn btn-danger">Ban User</button>
+      <button type="button" class="btn btn-primary" onclick="messageUser()">Message User</button>
+      <button type="button" class="btn btn-danger" onclick="updateUser()">Ban User</button>
     </div>
 
     <div class="row">
