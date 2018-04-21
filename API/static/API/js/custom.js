@@ -13,3 +13,7 @@ function updateEvent() {
 function updateUser() {
 	window.location = window.location.href + "update/"
 }
+
+function messageUser() {
+	window.location = "/manage/message/"
+}

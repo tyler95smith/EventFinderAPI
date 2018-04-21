@@ -60,6 +60,12 @@ def UserUpdate(request, user_id):
 	user.person.save()
 	return HttpResponseRedirect('/manage/users/' + str(user_id))
 
+def CreateMessage(request):
+	return render(request, 'API/manage_message_user.html')
+
+def SendMessage(request):
+	return HttpResponseRedirect('/manage/')
+
 class TempResult(APIView):
 	def get(self, request, format='json'):
 		BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
