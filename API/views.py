@@ -299,9 +299,12 @@ class UpdatePersonAccount(APIView):
 
 class CreateEvent(APIView):
 	def post(self, request, format='json'):
+		request.data['host']=request.user.id
+		request.data['attendees']=[request.user.id]
 		serializer = EventSerializer(data=request.data)
 		if serializer.is_valid():
 			event = serializer.save()
 			if event:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
