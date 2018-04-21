@@ -24,16 +24,34 @@
 </nav>
 
 <div class="container">
+  <h1>User Info</h1>
   {% if user %}
-    <label for="pwd">User ID:</label>
-    <input type="text" class="form-control" id="user_id" placeholder="User ID" value="{{ user.id }}" name="user_id" disabled="disabled">
+    <!-- Event Info -->
+    <label for="user_id">User ID:</label>
+    <input type="text" class="form-control" id="user_id" placeholder="" value="{{ user.id }}" name="user_id" disabled="disabled">
 
-    <label for="pwd">Username:</label>
-    <input type="text" class="form-control" id="username" placeholder="Event ID" value="{{ user.username }}" name="username" disabled="disabled">
+    <label for="username">Username:</label>
+    <input type="text" class="form-control" id="username" placeholder="" value="{{ user.username }}" name="username" disabled="disabled">
+
+    <label for="name">Name:</label>
+    <input type="text" class="form-control" id="name" placeholder="" value="{{ user.f_name }} {{ user.l_name }}" name="name" disabled="disabled">
+
+    <label for="email">Email:</label>
+    <input type="text" class="form-control" id="email" placeholder="" value="{{ user.email }}" name="email" disabled="disabled">
+
+    <label for="dob">Date of Birth:</label>
+    <input type="text" class="form-control" id="dob" placeholder="" value="{{ user.person.date_of_birth }}" name="dob" disabled="disabled">
+
+    <label for="bio">Bio:</label>
+    <input type="text" class="form-control" id="bio" placeholder="" value="{{ user.person.bio }}" name="bio" disabled="disabled">
+
+    <label for="p_loc">Primary Location:</label>
+    <input type="text" class="form-control" id="p_loc" placeholder="" value="{{ user.person.primaryLocation}}" name="p_loc" disabled="disabled">
 
     <div class="checkbox">
       <label><input type="checkbox" id="hidden" name="hidden" value="" {% if user.person.isBanned %} checked {% endif %} disabled="disabled">Is Banned:</label>
     </div>
+    <!-- End Event Info -->
 
     <div class="row pull-right">
       <button type="button" class="btn btn-primary">Message User</button>
@@ -42,7 +60,7 @@
 
     <div class="row">
       <div class="col-lg-12">
-        <h3>Reports</h3>
+        <h2>Reports</h2>
         <table class="table table-striped">
           <thead>
             <tr>
