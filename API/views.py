@@ -21,28 +21,30 @@ import os
 # Create your views here.
 def ManageIndex(request):
 	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0).order_by('-report_count')[:5]
-	user_list = User.objects.all()[:5]
+	user_list = User.objects.filter(person__isBanned=False).annotate(report_count=Count('reported_account', filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0)[:5]
 	context = {'event_list': event_list, 'user_list': user_list}
 	return render(request, 'API/manage_home.html', context)
 
 def ManageEvents(request):
-	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0)[:10]
+	event_list = Event.objects.annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0)[:10]
 	context={'event_list': event_list}
 	return render(request, 'API/manage_events.html', context)
 
 def ManageUsers(request):
-	user_list = User.objects.annotate(report_count=Count('reported_account', filter=Q(id__in=Report.objects.all()))).filter(person__isBanned=False, report_count__gt=0)
+	user_list = User.objects.annotate(report_count=Count('reported_account', filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0)
 	context = {'user_list': user_list}
 	return render(request, 'API/manage_users.html', context)
 
 def EventDetail(request, event_id):
 	event = get_object_or_404(Event, pk=event_id)
-	context={'event': event}
+	report_list = Report.objects.filter(rep_event=event_id)
+	context={'event': event, 'report_list': report_list}
 	return render(request, 'API/manage_event_detail.html', context)
 
 def UserDetail(request, user_id):
 	user = get_object_or_404(User, pk=user_id)
-	context={'user': user}
+	report_list = Report.objects.filter(rep_account=user_id)
+	context={'user': user, 'report_list': report_list}
 	return render(request, 'API/manage_user_detail.html', context)
 
 class TempResult(APIView):
@@ -142,12 +144,17 @@ class UpdatePassword(APIView):
 		return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GetMyInfo(APIView):
+	'''
+	'''
 	def get(self, request, format='json'):
-		data = json.loads(request.body.decode("utf-8"))
-		u = User.objects.get(username=data['username'])
-		p = Person.objects.get(user=u)
-		serializer = PersonSerializer(p)
-		return Response(serializer.data, status=status.HTTP_200_OK)
+		if request.user:
+			try:
+				p = Person.objects.get(user=request.user)
+				serializer = PersonSerializer(p)
+				return Response(serializer.data, status=status.HTTP_200_OK)
+			except Person.DoesNotExist:
+				return Response("Person does not exist for this account.", status=status.HTTP_400_BAD_REQUEST)
+		return Response("Token is not set or is not valid.", status=status.HTTP_400_BAD_REQUEST)
 
 
 '''
@@ -303,9 +310,12 @@ class UpdateEvent(APIView):
 
 class CreateEvent(APIView):
 	def post(self, request, format='json'):
+		request.data['host']=request.user.id
+		request.data['attendees']=[request.user.id]
 		serializer = EventSerializer(data=request.data)
 		if serializer.is_valid():
 			event = serializer.save()
 			if event:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

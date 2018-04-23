@@ -24,32 +24,65 @@
 </nav>
 
 <div class="container">
+  <h1>Event Info</h1>
 	{% if event %}
-		<label for="pwd">EventID:</label>
-    <input type="text" class="form-control" id="event_id" placeholder="Event ID" value="{{ event.id }}" name="event_id" disabled="disabled">
+    <!-- Event Info -->
+		<label for="event_id">EventID:</label>
+    <input type="text" class="form-control" id="event_id" placeholder="" value="{{ event.id }}" name="event_id" disabled="disabled">
 
-		<label for="pwd">Event Name:</label>
-    <input type="text" class="form-control" id="event_name" placeholder="Event Name" value="{{ event.event_name }}" name="event_name" disabled="disabled">
+		<label for="event_name">Event Name:</label>
+    <input type="text" class="form-control" id="event_name" placeholder="" value="{{ event.event_name }}" name="event_name" disabled="disabled">
+
+    <label for="event_desc">Description:</label>
+    <input type="text" class="form-control" id="event_desc" placeholder="" value="{{ event.description }}" name="event_desc" disabled="disabled">
+
+    <label for="event_location">Location:</label>
+    <input type="text" class="form-control" id="event_location" placeholder="" value="{{ event.location }}" name="event_location" disabled="disabled">
+
+    <label for="event_date">Event Date:</label>
+    <input type="text" class="form-control" id="event_date" placeholder="" value="{{ event.event_date }}" name="event_date" disabled="disabled">
+
+    <label for="event_age_min">Age Min:</label>
+    <input type="text" class="form-control" id="event_age_min" placeholder="" value="{{ event.age_min }}" name="event_age_min" disabled="disabled">
+
+    <label for="event_age_max">Age Max:</label>
+    <input type="text" class="form-control" id="event_age_max" placeholder="" value="{{ event.age_max }}" name="event_age_max" disabled="disabled">
+
+    <label for="event_date_created">Date Created:</label>
+    <input type="text" class="form-control" id="event_date_created" placeholder="" value="{{ event.date_created }}" name="event_date_created" disabled="disabled">
 
     <div class="checkbox">
       <label><input type="checkbox" id="hidden" name="hidden" value="" {% if event.is_hidden %} checked {% endif %} disabled="disabled">Is Hidden:</label>
     </div>
+    <!-- End Event Info -->
 
-        <div class="row">
-		    <div class="col-lg-12">
-			    <h3>Reports</h3>
-			    <table class="table table-striped">
-			    	<thead>
-			    		<tr>
-			    			<th>Reportee</th>
-			    			<th>Report Text</th>
-			    			<th>Date Submitted</th>
-			    		</tr>
-			    	</thead>
-			    </table>
-		    </div>
-		</div>
-    {% else %}
+    <div class="row pull-right">
+      <button type="button" class="btn btn-primary">Message Host</button>
+      <button type="button" class="btn btn-danger">Hide Event</button>
+    </div>
+
+    <div class="row">
+	    <div class="col-lg-12">
+		    <h2>Reports</h2>
+		    <table class="table table-striped">
+		    	<thead>
+		    		<tr>
+		    			<th>Reportee</th>
+		    			<th>Report Text</th>
+		    			<th>Date Submitted</th>
+		    		</tr>
+		    	</thead>
+          {% for report in report_list %}
+          <tr>
+            <td>{{ report.snitch.username }}</td>
+            <td>{{ report.rep_message }}</td>
+            <td>{{ report.date_created }}</td>
+          </tr>
+          {% endfor%}
+		    </table>
+	    </div> <!-- end col-lg-12 -->
+		</div> <!-- end row -->
+  {% else %}
     	<p>No event exists with that id!</p>
-    {% endif %}
-</div>
+  {% endif %}
+</div> <!-- end container -->

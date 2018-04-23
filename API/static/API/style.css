@@ -3,3 +3,12 @@
 	text-align: center;
 }
 
+.btn-dark:hover{
+	background-color: #343a40;
+	color: white;
+}
+
+.btn-dark{
+	background-color: #495258;
+	color: white;
+}
