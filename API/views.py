@@ -203,8 +203,6 @@ class GetFutureEvents(APIView):
 		#if not isinstance(req_user, int):
 		#	return Response("Error: The host value must be an integer id")
 		events = Event.objects.filter(attendees=req_user, event_date__gte=datetime.date.today())
-		serializer = EventSerializer(events, many=True)
-		return Response(serializer.data)
 		
 '''
  api end point to get events hosted by a specific user
@@ -310,11 +308,24 @@ class UpdatePersonAccount(APIView):
 		serializer = PersonSerializer(p_instance,data=request.data)
 
 		if serializer.is_valid():
-			person = serializer.save()
-			if person:
+			p_instance = serializer.save()
+			if p_instance:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
 		#return Response(p_instance.user.first_name)
+
+class UpdateEvent(APIView):
+	def patch(self, request, format='json'):
+		e_id = request.data.get('id')
+		e_instance = Event.objects.get(pk=e_id)
+
+		serializer = EventSerializer(e_instance, data=request.data)
+
+		if serializer.is_valid():
+			e_instance = serializer.save()
+			if e_instance
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors)
 
 class CreateEvent(APIView):
 	def post(self, request, format='json'):
