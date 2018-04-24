@@ -304,7 +304,7 @@ class UpdateEvent(APIView):
 
 		if serializer.is_valid():
 			e_instance = serializer.save()
-			if e_instance
+			if e_instance:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
 
