@@ -1,0 +1,47 @@
+{% load static %}
+
+<head>
+    <title>Home Page</title>
+    <link rel="stylesheet" href="{% static 'API/bootstrap/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'API/style.css' %}">
+    <script src="{% static 'API/js/custom.js' %}"></script>
+</head>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Event Finder</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="/manage/">Home</a></li>
+      <li><a href="/manage/events/">Events</a></li>
+      <li><a href="/manage/users/">Users</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+    	<li><a href="#"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <h1>Message User</h1>
+  <form action="{% url 'api:message-send' %}" method="post">
+		<label for="event_id">EventID:</label>
+    <input type="text" class="form-control" id="event_id" placeholder="" value="{{ event.id }}" name="event_id" disabled="disabled">
+
+		<label for="event_name">Event Name:</label>
+    <input type="text" class="form-control" id="event_name" placeholder="" value="{{ event.event_name }}" name="event_name" disabled="disabled">
+
+    <label for="event_desc">Description:</label>
+    <input type="text" class="form-control" id="event_desc" placeholder="" value="{{ event.description }}" name="event_desc" disabled="disabled">
+
+    <div class="checkbox">
+      <label><input type="checkbox" id="hidden" name="hidden" value="" {% if event.is_hidden %} checked {% endif %} disabled="disabled">Is Hidden:</label>
+    </div>
+
+    <div class="row pull-right">
+      <button type="submit" class="btn btn-primary" onclick="sendMessage()">Send</button>
+    </div>
+  </form>
+
+</div> <!-- end container -->

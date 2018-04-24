@@ -4,13 +4,18 @@ from . import views
 from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh_jwt_token
 from rest_framework_swagger.views import get_swagger_view
 
+app_name = 'api'
 urlpatterns = [
     # ex: /admin/
     path('manage/', views.ManageIndex, name='manage-index'),
     path('manage/events/', views.ManageEvents, name='manage-events'),
     path('manage/events/<int:event_id>/', views.EventDetail, name='event-detail'),
+    path('manage/events/<int:event_id>/update/', views.EventUpdate, name='event-update'),
     path('manage/users/', views.ManageUsers, name='manage-users'),
     path('manage/users/<int:user_id>/', views.UserDetail, name='user-detail'),
+    path('manage/users/<int:user_id>/update/', views.UserUpdate, name='user-update'),
+    path('manage/message/', views.CreateMessage, name='message-create'),
+    path('manage/message/send', views.SendMessage, name='message-send'),
     path('api/', get_swagger_view(title="EventFinder API")),
     path('api/test/', views.TestAPIView.as_view(), name='test-api'),
     path('api/userlist/', views.ListUsers.as_view(), name='list-users'),
