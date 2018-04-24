@@ -300,6 +300,8 @@ class CreatePersonAccount(APIView):
 
 
 '''		
+
+@permission_classes([])
 class UpdatePersonAccount(APIView):
 	def put(self, request, format='json'):
 		p_id = request.data.get('id')
@@ -314,6 +316,7 @@ class UpdatePersonAccount(APIView):
 		return Response(serializer.errors)
 		#return Response(p_instance.user.first_name)
 
+@permission_classes([])
 class UpdateEvent(APIView):
 	def put(self, request, format='json'):
 		e_id = request.data.get('id')
