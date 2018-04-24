@@ -301,7 +301,7 @@ class CreatePersonAccount(APIView):
 
 '''		
 class UpdatePersonAccount(APIView):
-	def patch(self, request, format='json'):
+	def put(self, request, format='json'):
 		p_id = request.data.get('id')
 		p_instance = Person.objects.get(pk=p_id) #person id not user id
 
@@ -315,7 +315,7 @@ class UpdatePersonAccount(APIView):
 		#return Response(p_instance.user.first_name)
 
 class UpdateEvent(APIView):
-	def patch(self, request, format='json'):
+	def put(self, request, format='json'):
 		e_id = request.data.get('id')
 		e_instance = Event.objects.get(pk=e_id)
 
