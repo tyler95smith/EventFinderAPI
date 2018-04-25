@@ -4,6 +4,7 @@ from .models.person import Person
 from .models.event import Event
 from .models.interests import Interests
 from .models.rsvp import Rsvp
+from .models.notification import Notification
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -130,4 +131,14 @@ class RsvpSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Rsvp
+		fields = '__all__'
+
+class NotificationSerializer(serializers.ModelSerializer):
+	def create(self, valid_data):
+		notif = Notification.objects.create(**valid_data)
+		notif.save()
+		
+		return notif
+	class Meta:
+		model = Notification
 		fields = '__all__'

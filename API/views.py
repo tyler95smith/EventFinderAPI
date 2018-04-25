@@ -5,12 +5,14 @@ from API.models import Person
 from API.models import Event
 from API.models import Report
 from API.models import Rsvp
+from API.models import Notification
 from django.contrib.auth.models import User
 from .serializers import PersonSerializer
 from .serializers import UserSerializer
 from .serializers import EventSerializer
 from .serializers import UpdatePasswordSerializer
 from .serializers import RsvpSerializer
+from .serializers import NotificationSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -390,5 +392,14 @@ class CreateEvent(APIView):
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+class GetNotifications(APIView):
+	def get(self, request, format='json'):
+		notifs = Notification.objects.filter(receiver=request.user)
+		rsvps  = Rsvp.objects.filter(event__host=request.user)
+		notif_serializer = NotificationSerializer(notifs, many=True)
+		rsvp_serializer = RsvpSerializer(rsvps, many=True)
+		request = {"notifications": [], "rsvps": []}
+		request["notifications"] = notif_serializer.data
+		request["rsvps"] = rsvp_serializer.data
+		return Response(request, status=status.HTTP_200_OK)
 
