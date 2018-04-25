@@ -370,14 +370,13 @@ class UpdateEvent(APIView):
 	def patch(self, request, format='json'):
 		e_id = request.data.get('id')
 		e_instance = Event.objects.get(pk=e_id)
-
 		serializer = EventSerializer(e_instance, data=request.data)
-
 		if serializer.is_valid():
 			e_instance = serializer.save()
 			if e_instance:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
+		return Response("event id does not exist.", status=status.HTTP_400_BAD_REQUEST)
 
 class CreateEvent(APIView):
 	def post(self, request, format='json'):
