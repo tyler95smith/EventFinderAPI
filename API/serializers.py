@@ -3,6 +3,7 @@ from django.contrib.auth.hashers import make_password
 from .models.person import Person
 from .models.event import Event
 from .models.interests import Interests
+from .models.rsvp import Rsvp
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -107,3 +108,14 @@ class EventSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Event
 		fields = ('id', 'date_created', 'event_name', 'location', 'event_date', 'description', 'age_min', 'age_max', 'interests', 'attendees', 'host', 'is_hidden')
+
+class RsvpSerializer(serializers.ModelSerializer):
+	def create(self, valid_data):
+		rsvp = Rsvp.objects.create(**valid_data)
+		rsvp.save()
+
+		return rsvp
+
+	class Meta:
+		model = Rsvp
+		fields = '__all__'

@@ -4,11 +4,13 @@ from rest_framework.decorators import api_view	# function based views
 from API.models import Person
 from API.models import Event
 from API.models import Report
+from API.models import Rsvp
 from django.contrib.auth.models import User
 from .serializers import PersonSerializer
 from .serializers import UserSerializer
 from .serializers import EventSerializer
 from .serializers import UpdatePasswordSerializer
+from .serializers import RsvpSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -19,7 +21,10 @@ from django.shortcuts import get_object_or_404, render
 from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 import os
-# Create your views here.
+
+#########################
+# Start Manage Views
+#########################
 def ManageIndex(request):
 	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0).order_by('-report_count')[:5]
 	user_list = User.objects.filter(person__isBanned=False).annotate(report_count=Count('reported_account', filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0)[:5]
@@ -66,10 +71,57 @@ def CreateMessage(request):
 def SendMessage(request):
 	return HttpResponseRedirect('/manage/')
 
-class TempResult(APIView):
+#class TempResult(APIView):
+#	def get(self, request, format='json'):
+#		BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#		return Response(BASE_DIR)
+#########################
+# End Manage Views
+#########################
+
+@permission_classes([])
+class GetRsvpList(APIView):
+	# get list of Rsvps
 	def get(self, request, format='json'):
-		BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-		return Response(BASE_DIR)
+		rsvps = Rsvp.objects.all()
+		serializer = RsvpSerializer(rsvps, many=True)
+		return Response(serializer.data)
+
+# EX:
+# {
+# 	"event": 1,
+# 	"requester": 3
+# }
+@permission_classes([])
+class CreateRsvp(APIView):
+	# when a RSVP is created
+	def post(self, request, format='json'):
+		serializer = RsvpSerializer(data=request.data)
+		if serializer.is_valid():
+			rsvp = serializer.save()
+			if rsvp:
+				# create a notification for the host accept/decline
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# EX:
+# {
+# 	"id": 1,
+# 	"status": 1
+# }
+@permission_classes([])
+class UpdateRsvp(APIView):
+	def patch(self, request, format='json'):
+		rsvp_id = request.data.get("id")
+		rsvp = Rsvp.objects.get(pk=rsvp_id)
+		serializer = RsvpSerializer(rsvp,data=request.data, partial=True)
+		if serializer.is_valid():
+			rsvp = serializer.save()
+			# create notification for the requester that details the descision
+			if rsvp:
+				return Response(serializer.data, status=status.HTTP_200_OK)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 #
 # To test api
 @permission_classes([])
@@ -300,10 +352,8 @@ class CreatePersonAccount(APIView):
 
 
 '''		
-
-@permission_classes([])
 class UpdatePersonAccount(APIView):
-	def put(self, request, format='json'):
+	def patch(self, request, format='json'):
 		p_id = request.data.get('id')
 		p_instance = Person.objects.get(pk=p_id) #person id not user id
 
@@ -316,9 +366,8 @@ class UpdatePersonAccount(APIView):
 		return Response(serializer.errors)
 		#return Response(p_instance.user.first_name)
 
-@permission_classes([])
 class UpdateEvent(APIView):
-	def put(self, request, format='json'):
+	def patch(self, request, format='json'):
 		e_id = request.data.get('id')
 		e_instance = Event.objects.get(pk=e_id)
 
@@ -326,7 +375,7 @@ class UpdateEvent(APIView):
 
 		if serializer.is_valid():
 			e_instance = serializer.save()
-			if e_instance
+			if e_instance:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
 
@@ -340,4 +389,6 @@ class CreateEvent(APIView):
 			if event:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
