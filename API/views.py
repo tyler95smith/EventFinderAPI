@@ -378,7 +378,6 @@ class UpdateEvent(APIView):
 			if e:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
-		return Response("event id does not exist.", status=status.HTTP_400_BAD_REQUEST)
 
 class CreateEvent(APIView):
 	def post(self, request, format='json'):
