@@ -19,6 +19,7 @@ from django.shortcuts import get_object_or_404, render
 from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 import os
+import json
 # Create your views here.
 def ManageIndex(request):
 	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0).order_by('-report_count')[:5]
@@ -303,30 +304,27 @@ class CreatePersonAccount(APIView):
 
 @permission_classes([])
 class UpdatePersonAccount(APIView):
-	def put(self, request, format='json'):
-		p_id = request.data.get('id')
-		p_instance = Person.objects.get(pk=p_id) #person id not user id
-
-		serializer = PersonSerializer(p_instance,data=request.data)
+	def patch(self, request, format='json'):
+		p = Person.objects.get(user=request.user)
+		serializer = PersonSerializer(p, data=request.data)
 
 		if serializer.is_valid():
-			p_instance = serializer.save()
-			if p_instance:
+			p = serializer.save()
+			if p:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
 		#return Response(p_instance.user.first_name)
 
-@permission_classes([])
 class UpdateEvent(APIView):
-	def put(self, request, format='json'):
+	def patch(self, request, format='json'):
 		e_id = request.data.get('id')
-		e_instance = Event.objects.get(pk=e_id)
+		e = Event.objects.get(pk=e_id)
 
-		serializer = EventSerializer(e_instance, data=request.data)
+		serializer = EventSerializer(e, data=request.data)
 
 		if serializer.is_valid():
-			e_instance = serializer.save()
-			if e_instance:
+			e = serializer.save()
+			if e:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
 

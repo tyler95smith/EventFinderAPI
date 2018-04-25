@@ -29,7 +29,7 @@ urlpatterns = [
     path('api/createpersonaccount/', views.CreatePersonAccount.as_view(), name='create-person-account'),
     path('api/updatepersonaccount/', views.UpdatePersonAccount.as_view(), name='update-person-account'),
     path('api/updatepassword/', views.UpdatePassword.as_view(), name='update-password'),
-    path('api/updateevent/', views.EditEvent.as_view(), name='update-event'),
+    path('api/updateevent/', views.UpdateEvent.as_view(), name='update-event'),
 	path('api/token/login/', obtain_jwt_token),
     path('api/token/validate/', verify_jwt_token),
     path('api/token/refresh/', refresh_jwt_token),
