@@ -20,7 +20,7 @@ urlpatterns = [
     path('api/test/', views.TestAPIView.as_view(), name='test-api'),
     path('api/userlist/', views.ListUsers.as_view(), name='list-users'),
     path('api/createuser/', views.CreateUser.as_view(), name='create-user'),
-	path('api/getmyinfo/', views.GetMyInfo.as_view(), name='get-my-info'),
+    path('api/getmyinfo/', views.GetMyInfo.as_view(), name='get-my-info'),
     path('api/activateuser/', views.ActivateUser.as_view(), name='activate-user'),
     path('api/getpastevents/', views.GetPastEvents.as_view(), name='get-past-events'),
     path('api/getfutureevents/', views.GetFutureEvents.as_view(), name='get-future-events'),
@@ -30,11 +30,14 @@ urlpatterns = [
     path('api/updatepersonaccount/', views.UpdatePersonAccount.as_view(), name='update-person-account'),
     path('api/updatepassword/', views.UpdatePassword.as_view(), name='update-password'),
     path('api/updateevent/', views.UpdateEvent.as_view(), name='update-event'),
+    path('api/rsvplist/', views.GetRsvpList.as_view(), name='get-rsvps'),
+    path('api/creatersvp/', views.CreateRsvp.as_view(), name='create-rsvp'),
+    path('api/updatersvp/', views.UpdateRsvp.as_view(), name='update-rsvp'),
 	path('api/token/login/', obtain_jwt_token),
     path('api/token/validate/', verify_jwt_token),
     path('api/token/refresh/', refresh_jwt_token),
     path('api/weblogin/', include('rest_framework.urls')),
     path('api/getperson/<int:id>/', views.GetPerson.as_view(), name='get-person-by-id'),
-	path('api/createevent/', views.CreateEvent.as_view(), name='create-event'),
-	path('api/getrecentevents/<int:count>/', views.GetRecentEvents.as_view(), name='getrecentevents')
+    path('api/createevent/', views.CreateEvent.as_view(), name='create-event'),
+    path('api/getrecentevents/<int:count>/', views.GetRecentEvents.as_view(), name='getrecentevents')
 ]
