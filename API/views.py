@@ -21,15 +21,12 @@ from django.shortcuts import get_object_or_404, render
 from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 import os
-<<<<<<< HEAD
 import json
-# Create your views here.
-=======
+
 
 #########################
 # Start Manage Views
 #########################
->>>>>>> 6c3c1b73eeed0907a2ee6d4a21de9b7e98e1bf08
 def ManageIndex(request):
 	event_list = Event.objects.filter(is_hidden=False).annotate(report_count=Count('report',filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0).order_by('-report_count')[:5]
 	user_list = User.objects.filter(person__isBanned=False).annotate(report_count=Count('reported_account', filter=Q(id__in=Report.objects.all()))).filter(report_count__gt=0)[:5]
