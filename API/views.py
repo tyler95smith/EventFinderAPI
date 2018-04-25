@@ -5,6 +5,7 @@ from API.models import Person
 from API.models import Event
 from API.models import Report
 from API.models import Rsvp
+from API.models import Notification
 from django.contrib.auth.models import User
 from .serializers import PersonSerializer
 from .serializers import UserSerializer
@@ -65,10 +66,12 @@ def UserUpdate(request, user_id):
 	user.person.save()
 	return HttpResponseRedirect('/manage/users/' + str(user_id))
 
-def CreateMessage(request):
-	return render(request, 'API/manage_message_user.html')
+def CreateNotif(request, user_id):
+	user = User.objects.get(pk=user_id)
+	context = {'user': user}
+	return render(request, 'API/manage_message_user.html', context)
 
-def SendMessage(request):
+def SendNotif(request):
 	return HttpResponseRedirect('/manage/')
 
 #class TempResult(APIView):
@@ -100,7 +103,15 @@ class CreateRsvp(APIView):
 		if serializer.is_valid():
 			rsvp = serializer.save()
 			if rsvp:
+				# rsvp's are now going to be the notificication not a seperate notification
 				# create a notification for the host accept/decline
+				#notif = Notification.objects.create(
+				#	rsvp=rsvp,
+				#	sender=User.objects.get(pk=rsvp.requester.id),
+				#	reciver=User.objects.get(pk=rsvp.event.host.id),
+				#	message=rsvp.requester.username + " has requested to join your event: " + rsvp.event.event_name
+				#	)
+				#notif.save()
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -117,8 +128,8 @@ class UpdateRsvp(APIView):
 		serializer = RsvpSerializer(rsvp,data=request.data, partial=True)
 		if serializer.is_valid():
 			rsvp = serializer.save()
-			# create notification for the requester that details the descision
 			if rsvp:
+			# create notification for the requester that details the descision
 				return Response(serializer.data, status=status.HTTP_200_OK)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

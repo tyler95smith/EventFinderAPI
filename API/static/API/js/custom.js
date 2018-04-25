@@ -14,6 +14,6 @@ function updateUser() {
 	window.location = window.location.href + "update/"
 }
 
-function messageUser() {
-	window.location = "/manage/message/"
+function messageUser(id) {
+    window.location = "/manage/users/" + id + "/message/"
 }

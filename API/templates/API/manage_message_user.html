@@ -25,19 +25,15 @@
 
 <div class="container">
   <h1>Message User</h1>
-  <form action="{% url 'api:message-send' %}" method="post">
-		<label for="event_id">EventID:</label>
-    <input type="text" class="form-control" id="event_id" placeholder="" value="{{ event.id }}" name="event_id" disabled="disabled">
+  <form action="{% url 'api:notif-send' user.id %}" method="post">
+		<label for="user_id">UserID:</label>
+    <input type="text" class="form-control" id="user_id" placeholder="" value="{{ user.id }}" name="user_id" disabled="disabled">
 
-		<label for="event_name">Event Name:</label>
-    <input type="text" class="form-control" id="event_name" placeholder="" value="{{ event.event_name }}" name="event_name" disabled="disabled">
+		<label for="username">Username:</label>
+    <input type="text" class="form-control" id="username" placeholder="" value="{{ user.username }}" name="username" disabled="disabled">
 
-    <label for="event_desc">Description:</label>
-    <input type="text" class="form-control" id="event_desc" placeholder="" value="{{ event.description }}" name="event_desc" disabled="disabled">
-
-    <div class="checkbox">
-      <label><input type="checkbox" id="hidden" name="hidden" value="" {% if event.is_hidden %} checked {% endif %} disabled="disabled">Is Hidden:</label>
-    </div>
+    <label for="message">Message:</label>
+    <input type="text" class="form-control" id="message" placeholder="" name="message" >
 
     <div class="row pull-right">
       <button type="submit" class="btn btn-primary" onclick="sendMessage()">Send</button>
