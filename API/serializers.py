@@ -82,6 +82,23 @@ class EventSerializer(serializers.ModelSerializer):
 	attendees = serializers.PrimaryKeyRelatedField(many=True,queryset=User.objects.all())
 	interests = serializers.PrimaryKeyRelatedField(many=True, queryset=Interests.objects.all())
 	
+	host_info = serializers.SerializerMethodField('get_host_p_info')
+	attendees_info = serializers.SerializerMethodField('get_attendees_p_info')
+	
+	def get_host_p_info(self, obj):
+		event = obj
+		p = Person.objects.get(user = event.host)
+		serializer = PersonSerializer(p)
+		return serializer.data
+
+	def get_attendees_p_info(self, obj):
+		infoArr = []
+		for attendee in obj.attendees.all():
+			a = Person.objects.get(user=attendee)
+			infoArr.append(a)
+		serializer = PersonSerializer(infoArr, many=True)
+		return serializer.data
+
 	def create(self, valid_data):
 		interest_ids = valid_data.pop("interests")
 		attendee_ids = valid_data.pop("attendees")
@@ -107,7 +124,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Event
-		fields = ('id', 'date_created', 'event_name', 'location', 'event_date', 'description', 'age_min', 'age_max', 'interests', 'attendees', 'host', 'is_hidden')
+		fields = ('id', 'date_created', 'event_name', 'location', 'event_date', 'description', 'age_min', 'age_max', 'interests', 'attendees', 'host', 'is_hidden', 'host_info', 'attendees_info')
 
 class RsvpSerializer(serializers.ModelSerializer):
 	def create(self, valid_data):
