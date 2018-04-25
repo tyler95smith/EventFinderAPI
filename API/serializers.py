@@ -56,21 +56,16 @@ class PersonSerializer(serializers.ModelSerializer):
 		return person
 
 	def update(self, instance, valid_data):
-		user_data = valid_data.pop('user') # get user information
-		user_inst = getattr(instance, 'user') # get the person's user model and update it
-		user_inst.first_name = user_data.get('name', user_inst.first_name);
-		#user_inst.username = user_data.get('username', user_inst.username)
-		#user_inst.email = user_data.get('email', user_inst.email)
-		#instance.user.password = user_data.get('password') # before i created this custom update function password was required?
-		user_inst.save() # save user section of data
-
+		user_data = valid_data.pop('user', {}) # get user information
+		user_inst = getattr(instance, 'user', {})
+		user_inst.first_name = user_data.get('first_name')
+		user_inst.save()
 		#instance.date_of_birth = valid_data.get('date_of_birth')
 		instance.bio = valid_data.get('bio')
 		#instance.primaryLocation = valid_data.get('primaryLocation')
 		#instance.currentLocation = valid_data.get('currentLocation')
 		#instance.is_hidden = valid_data.get('hideLocation')
-		instance.save() # save person section of data
-
+		instance.save()
 		return instance
 
 
@@ -82,6 +77,23 @@ class EventSerializer(serializers.ModelSerializer):
 	attendees = serializers.PrimaryKeyRelatedField(many=True,queryset=User.objects.all())
 	interests = serializers.PrimaryKeyRelatedField(many=True, queryset=Interests.objects.all())
 	
+	host_info = serializers.SerializerMethodField('get_host_p_info')
+	attendees_info = serializers.SerializerMethodField('get_attendees_p_info')
+	
+	def get_host_p_info(self, obj):
+		event = obj
+		p = Person.objects.get(user = event.host)
+		serializer = PersonSerializer(p)
+		return serializer.data
+
+	def get_attendees_p_info(self, obj):
+		infoArr = []
+		for attendee in obj.attendees.all():
+			a = Person.objects.get(user=attendee)
+			infoArr.append(a)
+		serializer = PersonSerializer(infoArr, many=True)
+		return serializer.data
+
 	def create(self, valid_data):
 		interest_ids = valid_data.pop("interests")
 		attendee_ids = valid_data.pop("attendees")
@@ -107,7 +119,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Event
-		fields = ('id', 'date_created', 'event_name', 'location', 'event_date', 'description', 'age_min', 'age_max', 'interests', 'attendees', 'host', 'is_hidden')
+		fields = ('id', 'date_created', 'event_name', 'location', 'event_date', 'description', 'age_min', 'age_max', 'interests', 'attendees', 'host', 'is_hidden', 'host_info', 'attendees_info')
 
 class RsvpSerializer(serializers.ModelSerializer):
 	def create(self, valid_data):
