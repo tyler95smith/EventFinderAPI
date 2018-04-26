@@ -123,6 +123,21 @@ class EventSerializer(serializers.ModelSerializer):
 		fields = ('id', 'date_created', 'event_name', 'location', 'event_date', 'description', 'age_min', 'age_max', 'interests', 'attendees', 'host', 'is_hidden', 'host_info', 'attendees_info')
 
 class RsvpSerializer(serializers.ModelSerializer):
+	requester_info = serializers.SerializerMethodField('get_requester_p_info')
+	event_info = serializers.SerializerMethodField()
+	
+	def get_event_info(self, obj):
+		serializer = EventSerializer(obj.event)
+		return serializer.data
+		
+	def get_requester_p_info(self, obj):
+		try:
+			p = Person.objects.get(user = obj.requester)
+			serializer = PersonSerializer(p)
+			return serializer.data
+		except Person.DoesNotExist:
+			return ""
+				
 	def create(self, valid_data):
 		rsvp = Rsvp.objects.create(**valid_data)
 		rsvp.save()
@@ -131,9 +146,29 @@ class RsvpSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Rsvp
-		fields = '__all__'
+		fields = ('date_created', 'event', 'requester', 'status', 'requester_info', 'event_info')
 
 class NotificationSerializer(serializers.ModelSerializer):
+
+	sender_info = serializers.SerializerMethodField('get_sender_p_info')
+	receiver_info = serializers.SerializerMethodField('get_receiver_p_info')
+	
+	def get_sender_p_info(self, obj):
+		try:
+			p = Person.objects.get(user = obj.sender)
+			serializer = PersonSerializer(p)
+			return serializer.data
+		except Person.DoesNotExist:
+			return ""
+			
+	def get_receiver_p_info(self, obj):
+		try:
+			p = Person.objects.get(user = obj.receiver)
+			serializer = PersonSerializer(p)
+			return serializer.data
+		except Person.DoesNotExist:
+			return ""
+				
 	def create(self, valid_data):
 		notif = Notification.objects.create(**valid_data)
 		notif.save()
@@ -141,4 +176,4 @@ class NotificationSerializer(serializers.ModelSerializer):
 		return notif
 	class Meta:
 		model = Notification
-		fields = '__all__'
+		fields = ('sender', 'receiver', 'date_created', 'date_sent', 'message', 'sender_info', 'receiver_info')
