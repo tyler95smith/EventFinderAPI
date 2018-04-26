@@ -20,9 +20,11 @@ import datetime # dont remove needed to import this way for the datetime.date.to
 
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Count, Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 import os
 import json
+
+from .forms import NotificationForm
 
 
 #########################
@@ -73,8 +75,24 @@ def CreateNotif(request, user_id):
 	context = {'user': user}
 	return render(request, 'API/manage_message_user.html', context)
 
-def SendNotif(request):
-	return HttpResponseRedirect('/manage/')
+def SendNotif(request, user_id):
+	if request.method == 'POST':
+		form = NotificationForm(request.POST)
+
+		if form.is_valid():
+			#proccess here
+			sender = User.objects.get(pk=form.cleaned_data['sender'])
+			reciver = User.objects.get(pk=form.cleaned_data['reciver'])
+			message = form.cleaned_data['message']
+
+			notif = Notification.objects.create(
+				sender=sender,
+				reciver=reciver,
+				message=message)
+			notif.save()
+
+			return HttpResponseRedirect('/manage/users/' + str(user_id))
+	return HttpResponseRedirect('/manage/users/' + str(user_id) + '/message/')
 
 #class TempResult(APIView):
 #	def get(self, request, format='json'):
