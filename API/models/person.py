@@ -17,21 +17,22 @@ from django.dispatch import receiver
 
 class Person(models.Model):
 
-    #
-    # The User this Person Account belongs to:
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+	#
+	# The User this Person Account belongs to:
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	
-    #
-    # Personal Account Attributes:
-    date_of_birth = models.DateField(null=True)
-    bio = models.CharField(max_length=500, default="")
-    primaryLocation = models.CharField(max_length=200, default='') #todo: Needs to be a Location, not just text
-    currentLocation = models.CharField(max_length=200, default='') #todo: Needs to be a Location, not just text
-    hideLocation = models.BooleanField(default=False)
-    isBanned = models.BooleanField(default=False)
+	#
+	# Personal Account Attributes:
+	date_of_birth = models.DateField(null=True)
+	bio = models.CharField(max_length=500, default="")
+	primaryLocation = models.CharField(max_length=200, default='') #todo: Needs to be a Location, not just text
+	currentLocation = models.CharField(max_length=200, default='') #todo: Needs to be a Location, not just text
+	hideLocation = models.BooleanField(default=False)
+	isFemale = models.BooleanField(default=True)
+	isBanned = models.BooleanField(default=False)
 
 	  #todo: profilePicture ImageField
-          #todo: photos array[images]
+		  #todo: photos array[images]
 	  #todo: interests... I believe that this needs to be implemented from the interests model..
 	  #	  as in, an interest will belong to many users. Then from this model a getInterests()
 	  #	  function can be implemented.

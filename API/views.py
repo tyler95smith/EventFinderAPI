@@ -12,6 +12,7 @@ from .serializers import UserSerializer
 from .serializers import EventSerializer
 from .serializers import UpdatePasswordSerializer
 from .serializers import RsvpSerializer
+from .serializers import NotificationSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -397,15 +398,11 @@ class UpdatePersonAccount(APIView):
 
 class UpdateEvent(APIView):
 	def patch(self, request, format='json'):
-		e_id = request.data.get('id')
-		e = Event.objects.get(pk=e_id)
-
-		serializer = EventSerializer(e, data=request.data)
-
-		if serializer.is_valid():
-			e = serializer.save()
-			if e:
-				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		Event.objects.filter(pk=request.data.get('id')).update(event_name=request.data.get('event_name'))
+		Event.objects.filter(pk=request.data.get('id')).update(event_date=request.data.get('event_date'))
+		Event.objects.filter(pk=request.data.get('id')).update(location=request.data.get('location'))
+		Event.objects.filter(pk=request.data.get('id')).update(description=request.data.get('description'))
+		return Response(request.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
 
 class CreateEvent(APIView):
@@ -419,5 +416,14 @@ class CreateEvent(APIView):
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+class GetNotifications(APIView):
+	def get(self, request, format='json'):
+		notifs = Notification.objects.filter(receiver=request.user)
+		rsvps  = Rsvp.objects.filter(event__host=request.user)
+		notif_serializer = NotificationSerializer(notifs, many=True)
+		rsvp_serializer = RsvpSerializer(rsvps, many=True)
+		request = {"notifications": [], "rsvps": []}
+		request["notifications"] = notif_serializer.data
+		request["rsvps"] = rsvp_serializer.data
+		return Response(request, status=status.HTTP_200_OK)
 
