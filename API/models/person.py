@@ -28,6 +28,7 @@ class Person(models.Model):
     primaryLocation = models.CharField(max_length=200, default='') #todo: Needs to be a Location, not just text
     currentLocation = models.CharField(max_length=200, default='') #todo: Needs to be a Location, not just text
     hideLocation = models.BooleanField(default=False)
+	isFemale = models.BooleanField(default=True)
     isBanned = models.BooleanField(default=False)
 
 	  #todo: profilePicture ImageField

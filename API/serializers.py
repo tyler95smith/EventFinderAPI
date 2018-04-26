@@ -72,7 +72,7 @@ class PersonSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Person
-		fields = ('id', 'user', 'date_of_birth', 'bio', 'primaryLocation', 'currentLocation', 'hideLocation', 'isBanned')
+		fields = ('id', 'user', 'date_of_birth', 'bio', 'primaryLocation', 'currentLocation', 'hideLocation','isFemale', 'isBanned')
 
 class EventSerializer(serializers.ModelSerializer):
 	attendees = serializers.PrimaryKeyRelatedField(many=True,queryset=User.objects.all())
