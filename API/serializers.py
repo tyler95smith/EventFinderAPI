@@ -5,6 +5,8 @@ from .models.event import Event
 from .models.interests import Interests
 from .models.rsvp import Rsvp
 from .models.notification import Notification
+from .models.conversation import Conversation
+from .models.message import Message
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -167,3 +169,37 @@ class NotificationSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Notification
 		fields = ('sender', 'receiver', 'date_created', 'date_sent', 'message', 'sender_info', 'receiver_info')
+
+class ConversationSerializer(serializers.ModelSerializer):
+	event = EventSerializer()
+	messages = serializers.SerializerMethodField()
+	
+	def get_messages(self, obj):
+		try:
+			messages = Message.objects.filter(conversation=obj)
+			mSerializer = MessageSerializer(messages, many=True)
+			return mSerializer.data
+			
+		except Message.DoesNotExist:
+			return ""
+	
+	def create(self, valid_data):
+		c = Conversation.objects.create(**valid_data)
+		c.save()
+		return c
+	
+	class Meta:
+		model = Conversation
+		fields = ('event', 'host', 'guest', 'messages')
+		
+class MessageSerializer(serializers.ModelSerializer):
+	sender = UserSerializer()
+	
+	def create(self, valid_data):
+		m = Message.objects.create(**valid_data)
+		m.save()
+		return m
+	
+	class Meta:
+		model = Message
+		fields = ('date_sent', 'conversation', 'sender', 'message')
