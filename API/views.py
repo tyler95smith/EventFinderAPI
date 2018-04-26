@@ -368,15 +368,11 @@ class UpdatePersonAccount(APIView):
 
 class UpdateEvent(APIView):
 	def patch(self, request, format='json'):
-		e_id = request.data.get('id')
-		e = Event.objects.get(pk=e_id)
-
-		serializer = EventSerializer(e, data=request.data)
-
-		if serializer.is_valid():
-			e = serializer.save()
-			if e:
-				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		Event.objects.filter(pk=request.data.get('id')).update(event_name=request.data.get('event_name'))
+		Event.objects.filter(pk=request.data.get('id')).update(event_date=request.data.get('event_date'))
+		Event.objects.filter(pk=request.data.get('id')).update(location=request.data.get('location'))
+		Event.objects.filter(pk=request.data.get('id')).update(description=request.data.get('description'))
+		return Response(request.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
 
 class CreateEvent(APIView):

@@ -106,16 +106,6 @@ class EventSerializer(serializers.ModelSerializer):
 		
 		return event
 
-	def update(self, instance, valid_data):
-		instance.event_name = valid_data.get('event_name')
-		instance.location = valid_data.get('location')
-		instance.event_date = valid_data.get('event_date')
-		instance.description = valid_data.get('description')
-		instance.age_min = valid_data.get('age_min')
-		instance.age_max = valid_data.get('age_max')
-		instance.save()
-
-		return instance
 
 	class Meta:
 		model = Event
