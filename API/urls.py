@@ -39,5 +39,6 @@ urlpatterns = [
     path('api/weblogin/', include('rest_framework.urls')),
     path('api/getperson/<int:id>/', views.GetPerson.as_view(), name='get-person-by-id'),
     path('api/createevent/', views.CreateEvent.as_view(), name='create-event'),
-    path('api/getrecentevents/<int:count>/', views.GetRecentEvents.as_view(), name='getrecentevents')
+    path('api/getrecentevents/<int:count>/', views.GetRecentEvents.as_view(), name='getrecentevents'),
+	path('api/getnotifications/', views.GetNotifications.as_view(), name='getnotifications')
 ]
