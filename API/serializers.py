@@ -138,7 +138,7 @@ class RsvpSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Rsvp
-		fields = ('date_created', 'event', 'requester', 'status', 'requester_info', 'event_info')
+		fields = ('id','date_created', 'event', 'requester', 'status', 'requester_info', 'event_info')
 
 class NotificationSerializer(serializers.ModelSerializer):
 
@@ -168,12 +168,16 @@ class NotificationSerializer(serializers.ModelSerializer):
 		return notif
 	class Meta:
 		model = Notification
-		fields = ('sender', 'receiver', 'date_created', 'date_sent', 'message', 'sender_info', 'receiver_info')
+		fields = ('id','sender', 'receiver', 'date_created', 'date_sent', 'message', 'sender_info', 'receiver_info')
 
 class ConversationSerializer(serializers.ModelSerializer):
-	event = EventSerializer()
 	messages = serializers.SerializerMethodField()
+	event_info = serializers.SerializerMethodField()
 	
+	def get_event_info(self, obj):
+		serializer = EventSerializer(obj.event)
+		return serializer.data
+		
 	def get_messages(self, obj):
 		try:
 			messages = Message.objects.filter(conversation=obj)
@@ -190,7 +194,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = Conversation
-		fields = ('event', 'host', 'guest', 'messages')
+		fields = ('id','event', 'host', 'guest', 'messages', 'event_info')
 		
 class MessageSerializer(serializers.ModelSerializer):
 	sender = UserSerializer()
@@ -202,4 +206,4 @@ class MessageSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = Message
-		fields = ('date_sent', 'conversation', 'sender', 'message')
+		fields = ('id', 'date_sent', 'conversation', 'sender', 'message')

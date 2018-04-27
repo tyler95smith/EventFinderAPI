@@ -6,6 +6,8 @@ from API.models import Event
 from API.models import Report
 from API.models import Rsvp
 from API.models import Notification
+from API.models import Conversation
+from API.models import Message
 from django.contrib.auth.models import User
 from .serializers import PersonSerializer
 from .serializers import UserSerializer
@@ -409,17 +411,23 @@ class GetNotifications(APIView):
 '''				
 class CreateConversation(APIView):
 	def post(self, request, format='json'):
-		event_id = request.query_params.get('event')
+		event_id = request.data.get('event')
+		guest_id = request.data.get('guest')
+		
+		#make sure conversation doesn't already exist
+		if Conversation.objects.filter(event__id=event_id, guest__id=guest_id).exists():
+			conversation = Conversation.objects.filter(event=event_id, guest=guest_id)[:1].get()
+			serializer = ConversationSerializer(conversation)
+			return Response(serializer.data, status=status.HTTP_200_OK)
+			
 		try:
-			event = Event.objects.get(id=event_id)
+			event = Event.objects.get(pk=event_id)
 		except Event.DoesNotExist:
-			return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
-		guest_id = request.query_params.get('guest')
+			return Response("Event does not exist.", status=status.HTTP_404_NOT_FOUND)
+			
 		if event.host.id == guest_id:
 			return Response("host and guest cannot be the same", status=status.HTTP_409_CONFLICT)
 		request.data["host"] = event.host.id
-		request.data["event"] = event
-		request.data["messages"] = []
 		serializer = ConversationSerializer(data=request.data)
 		if serializer.is_valid():
 			conversation = serializer.save()
