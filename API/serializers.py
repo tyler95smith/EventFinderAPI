@@ -10,7 +10,8 @@ from .models.conversation import Conversation
 from .models.message import Message
 from rest_framework import serializers
 from django.core.files.base import ContentFile
-from .models.profilepicture import ProfilePicture
+from .models import EventPicture
+from .models import ProfilePicture
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -41,22 +42,17 @@ class UpdatePasswordSerializer(serializers.ImageField):
 	new_password = serializers.CharField(required=True)
 	id = serializers.IntegerField(required=True)
 
-'''
-class PictureSerializer(serializers.ModelSerializer):
-
+class EventPictureSerializer(serializers.ModelSerializer):
+	
 	def create(self, valid_data):
-		pic = ProfilePicture.objects.create(**valid_data)
-		print(pic)
-		pic.user = valid_data["user"]
-		pic.image = valid_data["image"]
-		pic.description = valid_data["description"]
+		pic = EventPicture.objects.create(**valid_data)
 		pic.save()
 		return pic
 
 	class Meta():
-		model = ProfilePicture
-		fields = ('image', 'description')
-'''
+		model = EventPicture
+		fields = ('event', 'image')
+
 class PictureSerializer(serializers.ModelSerializer):
  
 	def create(self, valid_data):
@@ -118,8 +114,7 @@ class PersonSerializer(serializers.ModelSerializer):
 			'hideLocation',
 			'isFemale',
 			'interests', 
-			'isBanned', 
-			'profilePicture'
+			'isBanned'
 		)
 
 class ReportSerializer(serializers.ModelSerializer):
@@ -227,10 +222,19 @@ class NotificationSerializer(serializers.ModelSerializer):
 class ConversationSerializer(serializers.ModelSerializer):
 	messages = serializers.SerializerMethodField()
 	event_info = serializers.SerializerMethodField()
+	guest_info = serializers.SerializerMethodField()
 	
 	def get_event_info(self, obj):
 		serializer = EventSerializer(obj.event)
 		return serializer.data
+	
+	def get_guest_info(self, obj):
+		try:
+			p = Person.objects.get(user = obj.guest)
+			serializer = PersonSerializer(p)
+			return serializer.data
+		except Person.DoesNotExist:
+			return ""
 		
 	def get_messages(self, obj):
 		try:
@@ -248,7 +252,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = Conversation
-		fields = ('id','event', 'host', 'guest', 'messages', 'event_info')
+		fields = ('id','event', 'host', 'guest', 'messages', 'event_info', 'guest_info')
 		
 class MessageSerializer(serializers.ModelSerializer):
 	sender_info = serializers.SerializerMethodField()
