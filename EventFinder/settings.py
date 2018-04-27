@@ -79,6 +79,9 @@ REST_FRAMEWORK = {
 		'rest_framework.authentication.SessionAuthentication',
 		'rest_framework.authentication.BasicAuthentication',
 	),
+	'DEFAULT_PARSER_CLASSES': [
+		'rest_framework.parsers.JSONParser',
+	]
 }
 
 JWT_AUTH = {
@@ -135,4 +138,7 @@ from .smtp_settings import *
 STATIC_URL = '/static/'
 PROJECT_DIR=os.path.dirname(__file__)
 STATIC_ROOT = os.path.join(PROJECT_DIR,'static/')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 

@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
+from .interest import Interest
 #TODO: From reading online, it sounds like in addition to these "Profile" models for
 #	different account types, we should also create a custom User model so we can
 #	define how to distinguish what type of Account can belong to said User. 
@@ -30,6 +30,7 @@ class Person(models.Model):
 	hideLocation = models.BooleanField(default=False)
 	isFemale = models.BooleanField(default=True)
 	isBanned = models.BooleanField(default=False)
+	interests = models.CharField(max_length=200, default='')
 
 	  #todo: profilePicture ImageField
 		  #todo: photos array[images]

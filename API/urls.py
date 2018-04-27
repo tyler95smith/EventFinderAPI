@@ -1,5 +1,7 @@
 from django.urls import path
 from django.conf.urls import include
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh_jwt_token
 from rest_framework_swagger.views import get_swagger_view
@@ -28,11 +30,13 @@ urlpatterns = [
     path('api/personslist/', views.ListPersons.as_view(), name='list-persons'),
     path('api/createpersonaccount/', views.CreatePersonAccount.as_view(), name='create-person-account'),
     path('api/updatepersonaccount/', views.UpdatePersonAccount.as_view(), name='update-person-account'),
+	path('api/setprofilepicture/', views.SetProfilePicture.as_view(), name='set-profile-picture'),
     path('api/updatepassword/', views.UpdatePassword.as_view(), name='update-password'),
     path('api/updateevent/', views.UpdateEvent.as_view(), name='update-event'),
     path('api/rsvplist/', views.GetRsvpList.as_view(), name='get-rsvps'),
     path('api/creatersvp/', views.CreateRsvp.as_view(), name='create-rsvp'),
     path('api/updatersvp/', views.UpdateRsvp.as_view(), name='update-rsvp'),
+	path('api/sendreport/', views.SendReport.as_view(), name='send-report'),
 	path('api/token/login/', obtain_jwt_token),
     path('api/token/validate/', verify_jwt_token),
     path('api/token/refresh/', refresh_jwt_token),
@@ -40,5 +44,10 @@ urlpatterns = [
     path('api/getperson/<int:id>/', views.GetPerson.as_view(), name='get-person-by-id'),
     path('api/createevent/', views.CreateEvent.as_view(), name='create-event'),
     path('api/getrecentevents/<int:count>/', views.GetRecentEvents.as_view(), name='getrecentevents'),
-	path('api/getnotifications/', views.GetNotifications.as_view(), name='getnotifications')
+	path('api/getnotifications/', views.GetNotifications.as_view(), name='getnotifications'),
+	path('api/createconversation/', views.CreateConversation.as_view(), name='create-coversation'),
+	path('api/createmessage/', views.CreateChatMessage.as_view(), name='create-chat-message')
 ]
+
+if settings.DEBUG:
+	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
