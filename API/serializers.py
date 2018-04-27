@@ -136,6 +136,7 @@ class EventSerializer(serializers.ModelSerializer):
 	
 	host_info = serializers.SerializerMethodField('get_host_p_info')
 	attendees_info = serializers.SerializerMethodField('get_attendees_p_info')
+	picture = serializers.SerializerMethodField('get_image_url')
 	
 	def get_host_p_info(self, obj):
 		event = obj
@@ -150,6 +151,14 @@ class EventSerializer(serializers.ModelSerializer):
 			infoArr.append(a)
 		serializer = PersonSerializer(infoArr, many=True)
 		return serializer.data
+
+	def get_image_url(self,  obj):
+		try:
+			ep = EventPicture.objects.get(event=obj.id)
+			s = EventPictureSerializer(ep)
+			return s.data
+		except:
+			return ""
 
 	def create(self, valid_data):
 		interest_ids = valid_data.pop("interests")
@@ -166,7 +175,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Event
-		fields = ('id', 'date_created', 'event_name', 'location', 'event_date', 'description', 'age_min', 'age_max', 'interests', 'attendees', 'host', 'is_hidden', 'host_info', 'attendees_info')
+		fields = ('id', 'date_created', 'event_name', 'location', 'event_date', 'description', 'age_min', 'age_max', 'interests', 'attendees', 'host', 'is_hidden', 'host_info', 'attendees_info', 'picture')
 
 class RsvpSerializer(serializers.ModelSerializer):
 	requester_info = serializers.SerializerMethodField('get_requester_p_info')
