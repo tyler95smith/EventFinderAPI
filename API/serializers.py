@@ -173,10 +173,19 @@ class NotificationSerializer(serializers.ModelSerializer):
 class ConversationSerializer(serializers.ModelSerializer):
 	messages = serializers.SerializerMethodField()
 	event_info = serializers.SerializerMethodField()
+	guest_info = serializers.SerializerMethodField()
 	
 	def get_event_info(self, obj):
 		serializer = EventSerializer(obj.event)
 		return serializer.data
+	
+	def get_guest_info(self, obj):
+		try:
+			p = Person.objects.get(user = obj.guest)
+			serializer = PersonSerializer(p)
+			return serializer.data
+		except Person.DoesNotExist:
+			return ""
 		
 	def get_messages(self, obj):
 		try:
@@ -194,7 +203,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = Conversation
-		fields = ('id','event', 'host', 'guest', 'messages', 'event_info')
+		fields = ('id','event', 'host', 'guest', 'messages', 'event_info', 'guest_info')
 		
 class MessageSerializer(serializers.ModelSerializer):
 	sender_info = serializers.SerializerMethodField()
