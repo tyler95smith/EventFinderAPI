@@ -10,7 +10,7 @@ from .models.conversation import Conversation
 from .models.message import Message
 from rest_framework import serializers
 from django.core.files.base import ContentFile
-from .models import ProfilePicture
+from .models.profilepicture import ProfilePicture
 
 
 class UserSerializer(serializers.ModelSerializer):
