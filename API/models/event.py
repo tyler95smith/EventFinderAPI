@@ -10,7 +10,7 @@ class Event(models.Model):
 	description = models.CharField(max_length=512)
 	age_min = models.IntegerField(default=0)
 	age_max = models.IntegerField(default=0)
-	interests = models.ManyToManyField(Interest)
+	interests = models.ManyToManyField(Interest, null=True)
 	attendees = models.ManyToManyField(User, related_name="attendee_accounts")
 	host = models.ForeignKey(User, on_delete=models.CASCADE, related_name="event_host_account")
 	is_hidden = models.BooleanField(default=False)
