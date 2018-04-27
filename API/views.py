@@ -6,6 +6,8 @@ from API.models import Event
 from API.models import Report
 from API.models import Rsvp
 from API.models import Notification
+from API.models import Conversation
+from API.models import Message
 from django.contrib.auth.models import User
 from .serializers import PersonSerializer
 from .serializers import PictureSerializer
@@ -15,6 +17,8 @@ from .serializers import UpdatePasswordSerializer
 from .serializers import ReportSerializer
 from .serializers import RsvpSerializer
 from .serializers import NotificationSerializer
+from .serializers import MessageSerializer
+from .serializers import ConversationSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -228,7 +232,7 @@ class UpdatePassword(APIView):
 				user.save()
 				return Response("Success.", status=status.HTTP_200_OK)
 			except User.DoesNotExist:
-				return Response("User id does not exist.", status=status.HTTP_400_BAD_REQUEST)
+				return Response("User id does not exist.", status=status.HTTP_404_NOT_FOUND)
 		return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GetMyInfo(APIView):
@@ -241,7 +245,7 @@ class GetMyInfo(APIView):
 				serializer = PersonSerializer(p)
 				return Response(serializer.data, status=status.HTTP_200_OK)
 			except Person.DoesNotExist:
-				return Response("Person does not exist for this account.", status=status.HTTP_400_BAD_REQUEST)
+				return Response("Person does not exist for this account.", status=status.HTTP_404_NOT_FOUND)
 		return Response("Token is not set or is not valid.", status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -429,7 +433,7 @@ class CreateEvent(APIView):
 			event = serializer.save()
 			if event:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 class GetNotifications(APIView):
 	def get(self, request, format='json'):
@@ -441,4 +445,58 @@ class GetNotifications(APIView):
 		request["notifications"] = notif_serializer.data
 		request["rsvps"] = rsvp_serializer.data
 		return Response(request, status=status.HTTP_200_OK)
+
+'''
+	CreateConversation
+		Expected JSON fields:
+		"event": id of event
+		"guest": USER id of guest
+'''				
+class CreateConversation(APIView):
+	def post(self, request, format='json'):
+		event_id = request.data.get('event')
+		guest_id = request.data.get('guest')
+		
+		#make sure conversation doesn't already exist
+		if Conversation.objects.filter(event__id=event_id, guest__id=guest_id).exists():
+			conversation = Conversation.objects.filter(event=event_id, guest=guest_id)[:1].get()
+			serializer = ConversationSerializer(conversation)
+			return Response(serializer.data, status=status.HTTP_200_OK)
+		
+		#check event exists
+		try:
+			event = Event.objects.get(pk=event_id)
+		except Event.DoesNotExist:
+			return Response("Event does not exist.", status=status.HTTP_404_NOT_FOUND)
+		
+		#check host and guest are different users
+		if event.host.id == guest_id:
+			return Response("host and guest cannot be the same", status=status.HTTP_409_CONFLICT)
+		
+		#create new conversation
+		request.data["host"] = event.host.id
+		serializer = ConversationSerializer(data=request.data)
+		if serializer.is_valid():
+			conversation = serializer.save()
+			if conversation:
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+
+'''
+	CreateChatMessage
+		Expected JSON fields:
+		"conversation": id of conversation
+		"message": string message
+'''		
+class CreateChatMessage(APIView):
+	def post(self, request, format='json'):
+		request.data["sender"] = request.user.id
+		request.data["date_sent"] = datetime.datetime.now()
+		serializer = MessageSerializer(data=request.data)
+		if serializer.is_valid():
+			message = serializer.save()
+			if message:
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+		
 

@@ -6,6 +6,8 @@ from .models.report import Report
 from .models.interests import Interests
 from .models.rsvp import Rsvp
 from .models.notification import Notification
+from .models.conversation import Conversation
+from .models.message import Message
 from rest_framework import serializers
 from django.core.files.base import ContentFile
 from .models import ProfilePicture
@@ -193,7 +195,7 @@ class RsvpSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Rsvp
-		fields = ('date_created', 'event', 'requester', 'status', 'requester_info', 'event_info')
+		fields = ('id','date_created', 'event', 'requester', 'status', 'requester_info', 'event_info')
 
 class NotificationSerializer(serializers.ModelSerializer):
 
@@ -223,4 +225,49 @@ class NotificationSerializer(serializers.ModelSerializer):
 		return notif
 	class Meta:
 		model = Notification
-		fields = ('sender', 'receiver', 'date_created', 'date_sent', 'message', 'sender_info', 'receiver_info')
+		fields = ('id','sender', 'receiver', 'date_created', 'date_sent', 'message', 'sender_info', 'receiver_info')
+
+class ConversationSerializer(serializers.ModelSerializer):
+	messages = serializers.SerializerMethodField()
+	event_info = serializers.SerializerMethodField()
+	
+	def get_event_info(self, obj):
+		serializer = EventSerializer(obj.event)
+		return serializer.data
+		
+	def get_messages(self, obj):
+		try:
+			messages = Message.objects.filter(conversation=obj)
+			mSerializer = MessageSerializer(messages, many=True)
+			return mSerializer.data
+			
+		except Message.DoesNotExist:
+			return ""
+	
+	def create(self, valid_data):
+		c = Conversation.objects.create(**valid_data)
+		c.save()
+		return c
+	
+	class Meta:
+		model = Conversation
+		fields = ('id','event', 'host', 'guest', 'messages', 'event_info')
+		
+class MessageSerializer(serializers.ModelSerializer):
+	sender_info = serializers.SerializerMethodField()
+	def get_sender_info(self, obj):
+		try:
+			p = Person.objects.get(user = obj.sender)
+			serializer = PersonSerializer(p)
+			return serializer.data
+		except Person.DoesNotExist:
+			return ""
+			
+	def create(self, valid_data):
+		m = Message.objects.create(**valid_data)
+		m.save()
+		return m
+	
+	class Meta:
+		model = Message
+		fields = ('id', 'date_sent', 'conversation', 'sender', 'message', 'sender_info')
