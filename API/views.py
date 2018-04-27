@@ -8,13 +8,16 @@ from API.models import Rsvp
 from API.models import Notification
 from django.contrib.auth.models import User
 from .serializers import PersonSerializer
+from .serializers import PictureSerializer
 from .serializers import UserSerializer
 from .serializers import EventSerializer
 from .serializers import UpdatePasswordSerializer
+from .serializers import ReportSerializer
 from .serializers import RsvpSerializer
 from .serializers import NotificationSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.decorators import authentication_classes, permission_classes
 import datetime # dont remove needed to import this way for the datetime.date.today()
@@ -90,6 +93,16 @@ class GetRsvpList(APIView):
 		rsvps = Rsvp.objects.all()
 		serializer = RsvpSerializer(rsvps, many=True)
 		return Response(serializer.data)
+
+class SendReport(APIView):
+	def post(self, request, format='json'):
+		request.data['snitch'] = request.user.id
+		s = ReportSerializer(data=request.data)
+		if s.is_valid():
+			s.save()
+			return Response(s.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # EX:
 # {
@@ -367,6 +380,36 @@ class UpdatePersonAccount(APIView):
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
 		#return Response(p_instance.user.first_name)
+
+'''
+class SetProfilePicture(APIView):
+	parser_classes = (MultiPartParser, FormParser)
+	def post(self, request, *args, **kwargs):
+		mutable = request.POST._mutable
+		request.POST._mutable = True
+		request.data["user"] = request.user
+		request.POST._mutable = mutable
+		s = PictureSerializer(data=request.data)
+		if s.is_valid():
+			s.save()
+			return Response(s.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
+'''		
+
+class SetProfilePicture(APIView):
+	parser_classes = (MultiPartParser, FormParser)
+	def post(self, request, *args, **kwargs):
+		mutable = request.POST._mutable
+		request.POST._mutable = True
+		request.data["user"] = request.user
+		request.POST._mutable = mutable
+		s = PictureSerializer(data=request.data)
+		if s.is_valid():
+			s.save()
+			return Response(s.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UpdateEvent(APIView):
 	def patch(self, request, format='json'):
