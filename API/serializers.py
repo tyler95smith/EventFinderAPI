@@ -66,7 +66,7 @@ class PictureSerializer(serializers.ModelSerializer):
  
 	class Meta():
 		model = ProfilePicture
-		fields = ('image', 'description')
+		fields = ('user', 'image', 'description')
 	
 
 #--------------------------------------------------------------------
@@ -123,9 +123,7 @@ class PersonSerializer(serializers.ModelSerializer):
 class ReportSerializer(serializers.ModelSerializer):
 	
 	def create(self, valid_data):
-		#snitch  = valid_data.pop("snitch")
 		r = Report.objects.create(**valid_data)
-		#r.snitch = snitch
 		r.save()
 		return r
 

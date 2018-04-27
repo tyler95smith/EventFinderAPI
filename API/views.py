@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView	# class based views
 from rest_framework.decorators import api_view	# function based views
 from API.models import Person
+from API.models import ProfilePicture
 from API.models import Event
 from API.models import Report
 from API.models import Rsvp
@@ -29,9 +30,10 @@ import datetime # dont remove needed to import this way for the datetime.date.to
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
+
 import os
 import json
-
+from django.conf import settings
 
 #########################
 # Start Manage Views
@@ -385,29 +387,19 @@ class UpdatePersonAccount(APIView):
 		return Response(serializer.errors)
 		#return Response(p_instance.user.first_name)
 
-'''
 class SetProfilePicture(APIView):
 	parser_classes = (MultiPartParser, FormParser)
-	def post(self, request, *args, **kwargs):
+	def post(self, request, format='json'):
 		mutable = request.POST._mutable
 		request.POST._mutable = True
-		request.data["user"] = request.user
+		request.data["user"] = request.user.id
 		request.POST._mutable = mutable
-		s = PictureSerializer(data=request.data)
-		if s.is_valid():
-			s.save()
-			return Response(s.data, status=status.HTTP_201_CREATED)
-		else:
-			return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
-'''		
-
-class SetProfilePicture(APIView):
-	parser_classes = (MultiPartParser, FormParser)
-	def post(self, request, *args, **kwargs):
-		mutable = request.POST._mutable
-		request.POST._mutable = True
-		request.data["user"] = request.user
-		request.POST._mutable = mutable
+		try:
+			q = ProfilePicture.objects.get(user=request.user.id)
+			os.remove(os.path.join(settings.BASE_DIR, 'media', q.image.name))
+			q.delete()
+		except:
+			pass
 		s = PictureSerializer(data=request.data)
 		if s.is_valid():
 			s.save()
