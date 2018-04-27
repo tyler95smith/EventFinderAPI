@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView	# class based views
 from rest_framework.decorators import api_view	# function based views
 from API.models import Person
+from API.models import ProfilePicture
 from API.models import Event
 from API.models import Report
 from API.models import Rsvp
@@ -10,15 +11,18 @@ from API.models import Conversation
 from API.models import Message
 from django.contrib.auth.models import User
 from .serializers import PersonSerializer
+from .serializers import PictureSerializer
 from .serializers import UserSerializer
 from .serializers import EventSerializer
 from .serializers import UpdatePasswordSerializer
+from .serializers import ReportSerializer
 from .serializers import RsvpSerializer
 from .serializers import NotificationSerializer
 from .serializers import MessageSerializer
 from .serializers import ConversationSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.decorators import authentication_classes, permission_classes
 import datetime # dont remove needed to import this way for the datetime.date.today()
@@ -26,9 +30,10 @@ import datetime # dont remove needed to import this way for the datetime.date.to
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
+
 import os
 import json
-
+from django.conf import settings
 
 #########################
 # Start Manage Views
@@ -94,6 +99,16 @@ class GetRsvpList(APIView):
 		rsvps = Rsvp.objects.all()
 		serializer = RsvpSerializer(rsvps, many=True)
 		return Response(serializer.data)
+
+class SendReport(APIView):
+	def post(self, request, format='json'):
+		request.data['snitch'] = request.user.id
+		s = ReportSerializer(data=request.data)
+		if s.is_valid():
+			s.save()
+			return Response(s.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # EX:
 # {
@@ -371,6 +386,53 @@ class UpdatePersonAccount(APIView):
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors)
 		#return Response(p_instance.user.first_name)
+
+class setEventPicture(APIView):
+	parser_classes = (MultiPartParser, FormParser)
+	def post(self, request, format='json'):
+		mutable = request.POST._mutable
+		request.POST._mutable = True
+		request.POST._mutable = mutable
+		try:
+			q = EventPicture.objects.get(user=request.user.id)
+			os.remove(os.path.join(settings.BASE_DIR, 'media', q.image.name))
+		except:
+			pass
+		try:
+			q = EventPicture.objects.get(user=request.user.id)
+			q.delete()
+		except:
+			pass
+		s = EventPictureSerializer(data=request.data)
+		if s.is_valid():
+			s.save()
+			return Response(s.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)	
+
+class SetProfilePicture(APIView):
+	parser_classes = (MultiPartParser, FormParser)
+	def post(self, request, format='json'):
+		mutable = request.POST._mutable
+		request.POST._mutable = True
+		request.data["user"] = request.user.id
+		request.POST._mutable = mutable
+		try:
+			q = ProfilePicture.objects.get(user=request.user.id)
+			os.remove(os.path.join(settings.BASE_DIR, 'media', q.image.name))
+		except:
+			pass
+		try:	
+			q = ProfilePicture.objects.get(user=request.user.id)
+			q.delete()
+		except:
+			pass
+		s = PictureSerializer(data=request.data)
+		if s.is_valid():
+			s.save()
+			return Response(s.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UpdateEvent(APIView):
 	def patch(self, request, format='json'):

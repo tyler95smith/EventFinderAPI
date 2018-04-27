@@ -2,12 +2,17 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from .models.person import Person
 from .models.event import Event
+from .models.report import Report
 from .models.interests import Interests
 from .models.rsvp import Rsvp
 from .models.notification import Notification
 from .models.conversation import Conversation
 from .models.message import Message
 from rest_framework import serializers
+from django.core.files.base import ContentFile
+from .models import EventPicture
+from .models import ProfilePicture
+
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -32,10 +37,34 @@ class UserSerializer(serializers.ModelSerializer):
 #--------------------------------------------------------------------
 #    Serializer for updating a User's password endpoint. 
 #--------------------------------------------------------------------
-class UpdatePasswordSerializer(serializers.Serializer):
+class UpdatePasswordSerializer(serializers.ImageField):
 	old_password = serializers.CharField(required=True)
 	new_password = serializers.CharField(required=True)
 	id = serializers.IntegerField(required=True)
+
+class EventPictureSerializer(serializers.ModelSerializer):
+	
+	def create(self, valid_data):
+		pic = EventPicture.objects.create(**valid_data)
+		pic.save()
+		return pic
+
+	class Meta():
+		model = EventPicture
+		fields = ('event', 'image')
+
+class PictureSerializer(serializers.ModelSerializer):
+ 
+	def create(self, valid_data):
+		pic = ProfilePicture.objects.create(**valid_data)
+		pic.save()
+		return pic
+ 
+	class Meta():
+		model = ProfilePicture
+		fields = ('user', 'image', 'description')
+	
+
 #--------------------------------------------------------------------
 #
 #	PersonSerializer
@@ -51,9 +80,12 @@ class PersonSerializer(serializers.ModelSerializer):
 	user = UserSerializer()
 	
 	def create(self, valid_data):
+		interest_id = valid_data.pop("interests")
 		user_data = valid_data.pop('user')
 		n_user = User.objects.create_user(**user_data)
 		person = Person.objects.create(user=n_user,**valid_data)
+		for in_id in interest_id:
+			person.interests.add(in_id)
 		person.save()
 
 		return person
@@ -74,7 +106,31 @@ class PersonSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Person
-		fields = ('id', 'user', 'date_of_birth', 'bio', 'primaryLocation', 'currentLocation', 'hideLocation','isFemale', 'isBanned')
+		fields = (
+			'id', 
+			'user', 
+			'date_of_birth', 
+			'bio', 
+			'primaryLocation', 
+			'currentLocation', 
+			'hideLocation',
+			'isFemale',
+			'interests', 
+			'isBanned', 
+			'profilePicture'
+		)
+
+class ReportSerializer(serializers.ModelSerializer):
+	
+	def create(self, valid_data):
+		r = Report.objects.create(**valid_data)
+		r.save()
+		return r
+
+	class Meta:
+		model = Report
+		fields = ('date_created', 'rep_account', 'rep_event', 'snitch', 'rep_message')
+>>>>>>> eeacda68e89b908f2e6cccc0fa0ebf26a395c170
 
 class EventSerializer(serializers.ModelSerializer):
 	attendees = serializers.PrimaryKeyRelatedField(many=True,queryset=User.objects.all())
