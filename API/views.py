@@ -419,14 +419,18 @@ class CreateConversation(APIView):
 			conversation = Conversation.objects.filter(event=event_id, guest=guest_id)[:1].get()
 			serializer = ConversationSerializer(conversation)
 			return Response(serializer.data, status=status.HTTP_200_OK)
-			
+		
+		#check event exists
 		try:
 			event = Event.objects.get(pk=event_id)
 		except Event.DoesNotExist:
 			return Response("Event does not exist.", status=status.HTTP_404_NOT_FOUND)
-			
+		
+		#check host and guest are different users
 		if event.host.id == guest_id:
 			return Response("host and guest cannot be the same", status=status.HTTP_409_CONFLICT)
+		
+		#create new conversation
 		request.data["host"] = event.host.id
 		serializer = ConversationSerializer(data=request.data)
 		if serializer.is_valid():
@@ -443,10 +447,7 @@ class CreateConversation(APIView):
 '''		
 class CreateChatMessage(APIView):
 	def post(self, request, format='json'):
-		try:
-			request.data["sender"] = request.user.id
-		except User.DoesNotExist:
-			return Response("User id does not exist.", status=status.HTTP_404_NOT_FOUND)
+		request.data["sender"] = request.user.id
 		request.data["date_sent"] = datetime.datetime.now()
 		serializer = MessageSerializer(data=request.data)
 		if serializer.is_valid():

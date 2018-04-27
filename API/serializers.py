@@ -197,8 +197,15 @@ class ConversationSerializer(serializers.ModelSerializer):
 		fields = ('id','event', 'host', 'guest', 'messages', 'event_info')
 		
 class MessageSerializer(serializers.ModelSerializer):
-	sender = UserSerializer()
-	
+	sender_info = serializers.SerializerMethodField()
+	def get_sender_info(self, obj):
+		try:
+			p = Person.objects.get(user = obj.sender)
+			serializer = PersonSerializer(p)
+			return serializer.data
+		except Person.DoesNotExist:
+			return ""
+			
 	def create(self, valid_data):
 		m = Message.objects.create(**valid_data)
 		m.save()
@@ -206,4 +213,4 @@ class MessageSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = Message
-		fields = ('id', 'date_sent', 'conversation', 'sender', 'message')
+		fields = ('id', 'date_sent', 'conversation', 'sender', 'message', 'sender_info')
