@@ -80,12 +80,9 @@ class PersonSerializer(serializers.ModelSerializer):
 	user = UserSerializer()
 	
 	def create(self, valid_data):
-		interest_id = valid_data.pop("interests")
 		user_data = valid_data.pop('user')
 		n_user = User.objects.create_user(**user_data)
 		person = Person.objects.create(user=n_user,**valid_data)
-		for in_id in interest_id:
-			person.interests.add(in_id)
 		person.save()
 
 		return person
@@ -96,6 +93,7 @@ class PersonSerializer(serializers.ModelSerializer):
 		user_inst.first_name = user_data.get('first_name')
 		user_inst.save()
 		#instance.date_of_birth = valid_data.get('date_of_birth')
+		instance.interests = valid_data.get('interests')
 		instance.bio = valid_data.get('bio')
 		#instance.primaryLocation = valid_data.get('primaryLocation')
 		#instance.currentLocation = valid_data.get('currentLocation')
@@ -161,11 +159,8 @@ class EventSerializer(serializers.ModelSerializer):
 			return ""
 
 	def create(self, valid_data):
-		interest_ids = valid_data.pop("interests")
 		attendee_ids = valid_data.pop("attendees")
 		event = Event.objects.create(**valid_data)
-		for in_id in interest_ids:
-			event.interests.add(in_id)
 		for a_id in attendee_ids:
 			event.attendees.add(a_id)
 		event.save()
