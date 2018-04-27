@@ -2,19 +2,27 @@ from django.shortcuts import render
 from rest_framework.views import APIView	# class based views
 from rest_framework.decorators import api_view	# function based views
 from API.models import Person
+from API.models import ProfilePicture
 from API.models import Event
 from API.models import Report
 from API.models import Rsvp
 from API.models import Notification
+from API.models import Conversation
+from API.models import Message
 from django.contrib.auth.models import User
 from .serializers import PersonSerializer
+from .serializers import PictureSerializer
 from .serializers import UserSerializer
 from .serializers import EventSerializer
 from .serializers import UpdatePasswordSerializer
+from .serializers import ReportSerializer
 from .serializers import RsvpSerializer
 from .serializers import NotificationSerializer
+from .serializers import MessageSerializer
+from .serializers import ConversationSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.decorators import authentication_classes, permission_classes
 import datetime # dont remove needed to import this way for the datetime.date.today()
@@ -22,9 +30,10 @@ import datetime # dont remove needed to import this way for the datetime.date.to
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
+
 import os
 import json
-
+from django.conf import settings
 
 #########################
 # Start Manage Views
@@ -90,6 +99,16 @@ class GetRsvpList(APIView):
 		rsvps = Rsvp.objects.all()
 		serializer = RsvpSerializer(rsvps, many=True)
 		return Response(serializer.data)
+
+class SendReport(APIView):
+	def post(self, request, format='json'):
+		request.data['snitch'] = request.user.id
+		s = ReportSerializer(data=request.data)
+		if s.is_valid():
+			s.save()
+			return Response(s.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # EX:
 # {
@@ -215,7 +234,7 @@ class UpdatePassword(APIView):
 				user.save()
 				return Response("Success.", status=status.HTTP_200_OK)
 			except User.DoesNotExist:
-				return Response("User id does not exist.", status=status.HTTP_400_BAD_REQUEST)
+				return Response("User id does not exist.", status=status.HTTP_404_NOT_FOUND)
 		return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GetMyInfo(APIView):
@@ -228,7 +247,7 @@ class GetMyInfo(APIView):
 				serializer = PersonSerializer(p)
 				return Response(serializer.data, status=status.HTTP_200_OK)
 			except Person.DoesNotExist:
-				return Response("Person does not exist for this account.", status=status.HTTP_400_BAD_REQUEST)
+				return Response("Person does not exist for this account.", status=status.HTTP_404_NOT_FOUND)
 		return Response("Token is not set or is not valid.", status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -368,6 +387,26 @@ class UpdatePersonAccount(APIView):
 		return Response(serializer.errors)
 		#return Response(p_instance.user.first_name)
 
+class SetProfilePicture(APIView):
+	parser_classes = (MultiPartParser, FormParser)
+	def post(self, request, format='json'):
+		mutable = request.POST._mutable
+		request.POST._mutable = True
+		request.data["user"] = request.user.id
+		request.POST._mutable = mutable
+		try:
+			q = ProfilePicture.objects.get(user=request.user.id)
+			os.remove(os.path.join(settings.BASE_DIR, 'media', q.image.name))
+			q.delete()
+		except:
+			pass
+		s = PictureSerializer(data=request.data)
+		if s.is_valid():
+			s.save()
+			return Response(s.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class UpdateEvent(APIView):
 	def patch(self, request, format='json'):
 		Event.objects.filter(pk=request.data.get('id')).update(event_name=request.data.get('event_name'))
@@ -386,7 +425,7 @@ class CreateEvent(APIView):
 			event = serializer.save()
 			if event:
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
-		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
 
 class GetNotifications(APIView):
 	def get(self, request, format='json'):
@@ -398,4 +437,58 @@ class GetNotifications(APIView):
 		request["notifications"] = notif_serializer.data
 		request["rsvps"] = rsvp_serializer.data
 		return Response(request, status=status.HTTP_200_OK)
+
+'''
+	CreateConversation
+		Expected JSON fields:
+		"event": id of event
+		"guest": USER id of guest
+'''				
+class CreateConversation(APIView):
+	def post(self, request, format='json'):
+		event_id = request.data.get('event')
+		guest_id = request.data.get('guest')
+		
+		#make sure conversation doesn't already exist
+		if Conversation.objects.filter(event__id=event_id, guest__id=guest_id).exists():
+			conversation = Conversation.objects.filter(event=event_id, guest=guest_id)[:1].get()
+			serializer = ConversationSerializer(conversation)
+			return Response(serializer.data, status=status.HTTP_200_OK)
+		
+		#check event exists
+		try:
+			event = Event.objects.get(pk=event_id)
+		except Event.DoesNotExist:
+			return Response("Event does not exist.", status=status.HTTP_404_NOT_FOUND)
+		
+		#check host and guest are different users
+		if event.host.id == guest_id:
+			return Response("host and guest cannot be the same", status=status.HTTP_409_CONFLICT)
+		
+		#create new conversation
+		request.data["host"] = event.host.id
+		serializer = ConversationSerializer(data=request.data)
+		if serializer.is_valid():
+			conversation = serializer.save()
+			if conversation:
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+
+'''
+	CreateChatMessage
+		Expected JSON fields:
+		"conversation": id of conversation
+		"message": string message
+'''		
+class CreateChatMessage(APIView):
+	def post(self, request, format='json'):
+		request.data["sender"] = request.user.id
+		request.data["date_sent"] = datetime.datetime.now()
+		serializer = MessageSerializer(data=request.data)
+		if serializer.is_valid():
+			message = serializer.save()
+			if message:
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+		
 
