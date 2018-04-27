@@ -10,7 +10,8 @@ from .models.conversation import Conversation
 from .models.message import Message
 from rest_framework import serializers
 from django.core.files.base import ContentFile
-from .models.profilepicture import ProfilePicture
+from .models import EventPicture
+from .models import ProfilePicture
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -41,22 +42,17 @@ class UpdatePasswordSerializer(serializers.ImageField):
 	new_password = serializers.CharField(required=True)
 	id = serializers.IntegerField(required=True)
 
-'''
-class PictureSerializer(serializers.ModelSerializer):
-
+class EventPictureSerializer(serializers.ModelSerializer):
+	
 	def create(self, valid_data):
-		pic = ProfilePicture.objects.create(**valid_data)
-		print(pic)
-		pic.user = valid_data["user"]
-		pic.image = valid_data["image"]
-		pic.description = valid_data["description"]
+		pic = EventPicture.objects.create(**valid_data)
 		pic.save()
 		return pic
 
 	class Meta():
-		model = ProfilePicture
-		fields = ('image', 'description')
-'''
+		model = EventPicture
+		fields = ('event', 'image')
+
 class PictureSerializer(serializers.ModelSerializer):
  
 	def create(self, valid_data):

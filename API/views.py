@@ -387,6 +387,29 @@ class UpdatePersonAccount(APIView):
 		return Response(serializer.errors)
 		#return Response(p_instance.user.first_name)
 
+class setEventPicture(APIView):
+	parser_classes = (MultiPartParser, FormParser)
+	def post(self, request, format='json'):
+		mutable = request.POST._mutable
+		request.POST._mutable = True
+		request.POST._mutable = mutable
+		try:
+			q = EventPicture.objects.get(user=request.user.id)
+			os.remove(os.path.join(settings.BASE_DIR, 'media', q.image.name))
+		except:
+			pass
+		try:
+			q = EventPicture.objects.get(user=request.user.id)
+			q.delete()
+		except:
+			pass
+		s = EventPictureSerializer(data=request.data)
+		if s.is_valid():
+			s.save()
+			return Response(s.data, status=status.HTTP_201_CREATED)
+		else:
+			return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)	
+
 class SetProfilePicture(APIView):
 	parser_classes = (MultiPartParser, FormParser)
 	def post(self, request, format='json'):
@@ -397,6 +420,10 @@ class SetProfilePicture(APIView):
 		try:
 			q = ProfilePicture.objects.get(user=request.user.id)
 			os.remove(os.path.join(settings.BASE_DIR, 'media', q.image.name))
+		except:
+			pass
+		try:	
+			q = ProfilePicture.objects.get(user=request.user.id)
 			q.delete()
 		except:
 			pass
