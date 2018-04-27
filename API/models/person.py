@@ -29,8 +29,8 @@ class Person(models.Model):
 	currentLocation = models.CharField(max_length=200, default='') #todo: Needs to be a Location, not just text
 	hideLocation = models.BooleanField(default=False)
 	isFemale = models.BooleanField(default=True)
-    isBanned = models.BooleanField(default=False)
-	interests = models.ManyToManyField(Integer)
+	isBanned = models.BooleanField(default=False)
+	interests = models.CharField(max_length=200, default='')
 
 	  #todo: profilePicture ImageField
 		  #todo: photos array[images]
