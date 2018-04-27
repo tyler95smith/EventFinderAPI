@@ -271,7 +271,7 @@ class GetPastEvents(APIView):
 		# if the host value is not the correct type return error
 		#if not isinstance(req_user, int):
 		#	return Response("Error: The host value must be an integer id")
-		events = Event.objects.filter(attendees=req_user, event_date__lt=datetime.date.today())
+		events = Event.objects.filter(attendees=req_user, event_date__lt=datetime.date.today(),is_hidden=False)
 		serializer = EventSerializer(events, many=True)
 		return Response(serializer.data)
 
@@ -286,7 +286,9 @@ class GetFutureEvents(APIView):
 		# if the host value is not the correct type return error
 		#if not isinstance(req_user, int):
 		#	return Response("Error: The host value must be an integer id")
-		events = Event.objects.filter(attendees=req_user, event_date__gte=datetime.date.today())
+		events = Event.objects.filter(attendees=req_user, event_date__gte=datetime.date.today(),is_hidden=False)
+		serializer = EventSerializer(events, many=True)
+		return Response(serializer.data)
 		
 '''
  api end point to get events hosted by a specific user
