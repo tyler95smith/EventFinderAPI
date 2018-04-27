@@ -116,8 +116,7 @@ class PersonSerializer(serializers.ModelSerializer):
 			'hideLocation',
 			'isFemale',
 			'interests', 
-			'isBanned', 
-			'profilePicture'
+			'isBanned'
 		)
 
 class ReportSerializer(serializers.ModelSerializer):
