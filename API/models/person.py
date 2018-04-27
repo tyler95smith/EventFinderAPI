@@ -30,6 +30,7 @@ class Person(models.Model):
     hideLocation = models.BooleanField(default=False)
 	isFemale = models.BooleanField(default=True)
     isBanned = models.BooleanField(default=False)
+	interests = models.ManyToManyField(Integer)
 
 	  #todo: profilePicture ImageField
           #todo: photos array[images]

@@ -49,9 +49,12 @@ class PersonSerializer(serializers.ModelSerializer):
 	user = UserSerializer()
 	
 	def create(self, valid_data):
+		interest_id = valid_data.pop("interests")
 		user_data = valid_data.pop('user')
 		n_user = User.objects.create_user(**user_data)
 		person = Person.objects.create(user=n_user,**valid_data)
+		for in_id in interest_id:
+			person.interests.add(in_id)
 		person.save()
 
 		return person
@@ -72,7 +75,7 @@ class PersonSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Person
-		fields = ('id', 'user', 'date_of_birth', 'bio', 'primaryLocation', 'currentLocation', 'hideLocation','isFemale', 'isBanned')
+		fields = ('id', 'user', 'date_of_birth', 'bio', 'primaryLocation', 'currentLocation', 'hideLocation','interests', 'isFemale', 'isBanned')
 
 class EventSerializer(serializers.ModelSerializer):
 	attendees = serializers.PrimaryKeyRelatedField(many=True,queryset=User.objects.all())
