@@ -130,7 +130,6 @@ class ReportSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Report
 		fields = ('date_created', 'rep_account', 'rep_event', 'snitch', 'rep_message')
->>>>>>> eeacda68e89b908f2e6cccc0fa0ebf26a395c170
 
 class EventSerializer(serializers.ModelSerializer):
 	attendees = serializers.PrimaryKeyRelatedField(many=True,queryset=User.objects.all())

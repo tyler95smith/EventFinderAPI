@@ -1,6 +1,6 @@
 from .interests import Interests
 from .event import Event
-from .eventpicture import EventPicture
+#from .eventpicture import EventPicture
 from .report import Report
 from .conversation import Conversation
 from .message import Message
